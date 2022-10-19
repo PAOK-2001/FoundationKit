@@ -1,13 +1,21 @@
 void FRequestManager_WB::Init()
 {
+
+	FString Url = GetDefault<UFoundationSettings>()->GetNetworkURL();
+    if( Url.IsEmpty() )
+    {
+        Url = GetDefault<UFoundationSettings>()->GetNetwork() == ESolanaNetwork::DevNet ? "https://api.devnet.solana.com/" : "https://api.mainnet-beta.solana.com/";
+    }
+
 	// Sometimes the websocket modules doesn't load by default so adding a if to make sure it does
 	if (!FModuleManager::Get().IsModuleLoaded(("WebSockets")))
 	{
 		FModuleManager::Get().LoadModule("WebSockets");
 	}
 
-	// we use port localhost:8080 to run a test node application in the local environment to test out the websocket
-	WebSocket = FWebSocketsModule::Get().CreateWebSocket("ws://localhost:8080");
+	// might have to add ws to the url (the protocal)
+	// WebSocket = FWebSocketsModule::Get().CreateWebSocket("ws://localhost:8080");
+	WebSocket = FWebSocketsModule::Get().CreateWebSocket(Url);
 
 	WebSocket->OnConnected().AddLambda([]()
 	{
@@ -35,5 +43,5 @@ void FRequestManager_WB::Shutdown()
 	{
 		WebSocket->Close();
 	}
-	
+
 }
