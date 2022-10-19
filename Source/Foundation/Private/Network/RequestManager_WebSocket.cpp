@@ -19,6 +19,7 @@ void FRequestManager_WB::Init()
 
 	WebSocket->OnConnected().AddLambda([]()
 	{
+		FRequestManager_WB::OnConnected_Helper();
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "We Did heheha!!!");
 	});
 
@@ -30,6 +31,11 @@ void FRequestManager_WB::Init()
 	WebSocket->OnClosed().AddLambda([](int32 StatusCode, const FString& Reason, bool bWasClean)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, bWasClean ? FColor::Green : FColor::Red, "Connection closed " + Reason);
+	});
+
+	WebSocket->OnMessage().AddLambda([](const FString& Response)
+	{
+		FRequestManager_WB::OnResponse(Response);
 	});
 	
 	WebSocket->Connect();
