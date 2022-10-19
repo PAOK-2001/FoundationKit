@@ -1,8 +1,5 @@
-void UWebSocketTestMyGameInstance::Init()
+void FRequestManager_WB::Init()
 {
-	//Since we are expanding from the Parent method we want to make sure the stuff in the parent runs
-	Super::Init();
-
 	// Sometimes the websocket modules doesn't load by default so adding a if to make sure it does
 	if (!FModuleManager::Get().IsModuleLoaded(("WebSockets")))
 	{
@@ -31,12 +28,12 @@ void UWebSocketTestMyGameInstance::Init()
 	
 }
 
-void UWebSocketTestMyGameInstance::Shutdown()
+void FRequestManager_WB::Shutdown()
 {
 
 	if(WebSocket->IsConnected())
 	{
 		WebSocket->Close();
 	}
-	Super::Shutdown();
+	
 }
