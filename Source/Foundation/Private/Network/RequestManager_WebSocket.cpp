@@ -2,23 +2,24 @@
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
+#include "Network/RequestUtils.h"
 
 DECLARE_LOG_CATEGORY_CLASS(RequestManager_WebSocket, Log, All);
 
 static int64 LastMessageID = 0;
 static TArray<FRequestData*> PendingRequests;
 
-int64 FRequestManager_WB::GetNextMessageID()
+int64 UFRequestManager_WB::GetNextMessageID()
 {
 	return LastMessageID++;
 }
 
-int64 FRequestManager_WB::GetLastMessageID()
+int64 UFRequestManager_WB::GetLastMessageID()
 {
 	return LastMessageID;
 }
 
-void FRequestManager_WB::Init()
+void UFRequestManager_WB::Init()
 {
 	FString Url = GetDefault<UFoundationSettings>()->GetNetworkURL();
     if( Url.IsEmpty() )
@@ -38,7 +39,7 @@ void FRequestManager_WB::Init()
 
 	WebSocket->OnConnected().AddLambda([]()
 	{
-		FRequestManager_WB::OnConnected_Helper();
+		UFRequestManager_WB::OnConnected_Helper();
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "We Did heheha!!!");
 	});
 
@@ -54,14 +55,14 @@ void FRequestManager_WB::Init()
 
 	WebSocket->OnMessage().AddLambda([](const FString& Response)
 	{
-		FRequestManager_WB::OnResponse(Response);
+		UFRequestManager_WB::OnResponse(Response);
 	});
 	
 	WebSocket->Connect();
 	
 }
 
-void FRequestManager_WB::Shutdown()
+void UFRequestManager_WB::Shutdown()
 {
 
 	if(WebSocket->IsConnected())
@@ -71,7 +72,7 @@ void FRequestManager_WB::Shutdown()
 
 }
 
-void FRequestManager_WB::SendRequest(FRequestData* RequestData)
+void UFRequestManager_WB::SendRequest(FRequestData* RequestData)
 {
 	if (!WebSocket->IsConnected())
 	{
@@ -83,7 +84,7 @@ void FRequestManager_WB::SendRequest(FRequestData* RequestData)
 
 }
 
-void FRequestManager_WB::OnResponse(const FString &Response){
+void UFRequestManager_WB::OnResponse(const FString &Response){
 	TSharedPtr<FJsonObject> ParsedJSON;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
 
@@ -115,14 +116,14 @@ void FRequestManager_WB::OnResponse(const FString &Response){
 	}
 }
 
-void FRequestManager_WB::CancelRequest(FRequestData* RequestData)
+void UFRequestManager_WB::CancelRequest(FRequestData* RequestData)
 {
 	PendingRequests.Remove(RequestData);
 	delete RequestData;
           	
 }
 
-void FRequestManager_WB::OnConnected_Helper(){
+void UFRequestManager_WB::OnConnected_Helper(){
 	OnConnected.Broadcast();
 
 }

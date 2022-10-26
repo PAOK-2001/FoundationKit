@@ -4,10 +4,6 @@
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 
-DECLARE_DELEGATE_OneParam(FJsonObject&);
-
-typedef TFunctionRef<void(FJsonObject&)> RequestCB;
-
 struct FOUNDATION_API FRequestData
 {
 	FRequestData() {}
@@ -17,13 +13,14 @@ struct FOUNDATION_API FRequestData
 	FString Body;
 };
 
-class FOUNDATION_API FRequestManager_WB:  public UObject{
+UCLASS(BlueprintType)
+class  FOUNDATION_API UFRequestManager_WB:  public UObject{
     GENERATED_BODY()
 public:
-    DECLARE_EVENT(FRequestManager_WB, FSocketConnected);
+    DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
     TSharedPtr<IWebSocket> WebSocket;
-    virtual void Init() override;
-    virtual void Shutdown() override;
+    virtual void Init();
+    virtual void Shutdown();
 
     int64 GetNextMessageID();
     int64 GetLastMessageID();
@@ -35,4 +32,4 @@ private:
     FSocketConnected OnConnected;
     void OnResponse(const FString &Response);
     void OnConnected_Helper();
-}
+};
