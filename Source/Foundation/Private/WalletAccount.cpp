@@ -22,6 +22,7 @@ Contributers: Riccardo Torrisi, Federico Arona
 #include "JsonObjectConverter.h"
 #include "TokenAccount.h"
 #include "Network/RequestManager.h"
+#include "Network/RequestManager_WebSocket.h"
 #include "Network/RequestUtils.h"
 #include "SolanaUtils/Utils/TransactionUtils.h"
 
@@ -199,3 +200,14 @@ double UWalletAccount::GetSolBalance() const
 {
 	return Lamports.Get(0.f) / 1e9;
 }
+
+double UWalletAccount::GetAcountBalance_WB(const FString& pubKey)
+{
+	UFRequestManager_WB Manager_Wb;
+	Manager_Wb.Init();
+	FRequestData* balanceRequest = FRequestUtils::RequestAccountBalance(pubKey);
+	Manager_Wb.SendRequest(balanceRequest);
+	return FRequestUtils::ParseAccountBalanceResponse(balanceRequest->Response);
+	
+}
+

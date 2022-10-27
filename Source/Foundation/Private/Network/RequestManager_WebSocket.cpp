@@ -1,4 +1,7 @@
 #include "Network/RequestManager_WebSocket.h"
+
+#include <execution>
+
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
@@ -99,6 +102,7 @@ void UFRequestManager_WB::OnResponse(const FString &Response){
             	FRequestData* request = *PendingRequests.FindByPredicate([&](FRequestData* data){return data->Id == id;});
             	if(request)
             	{
+            		request->Response = ParsedJSON;
             		PendingRequests.Remove(request);
             		delete request;
             	}

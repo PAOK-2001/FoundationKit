@@ -35,6 +35,7 @@ struct FOUNDATION_API FRequestData
 
 	UINT Id;
 	FString Body;
+	TSharedPtr<FJsonObject> Response;
 	RequestCallback Callback;
 	RequestErrorCallback ErrorCallback;
 };

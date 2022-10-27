@@ -3,7 +3,8 @@
 #include "CoreMinimal.h"
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
-
+DECLARE_DELEGATE_OneParam( RequestCallback, FJsonObject&);
+DECLARE_DELEGATE_OneParam( RequestErrorCallback, const FText& FailureReason);
 struct FOUNDATION_API FRequestData
 {
 	FRequestData() {}
@@ -11,6 +12,9 @@ struct FOUNDATION_API FRequestData
 
 	UINT Id;
 	FString Body;
+	TSharedPtr<FJsonObject> Response;
+	RequestCallback Callback;
+	RequestErrorCallback ErrorCallback;
 };
 
 UCLASS(BlueprintType)
