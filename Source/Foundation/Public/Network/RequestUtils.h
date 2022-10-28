@@ -24,6 +24,9 @@ struct FAccountInfoJson;
 struct FBalanceResultJson;
 struct FTokenAccountArrayJson;
 struct FProgramAccountJson;
+struct FClusterNodesArrayJson;
+struct FSimulateTransactionInfoJson;
+struct FGetTransactionInfoJson;
 
 class FOUNDATION_API FRequestUtils
 {
@@ -60,4 +63,22 @@ public:
 
 	static void DisplayError(const FString& error);
 	static void DisplayInfo(const FString& info);
+
+	static FRequestData* GetTransaction(const FString& transaction);
+	static FGetTransactionInfoJson ParseGetTransactionResponse(const FJsonObject& data);
+
+	static FRequestData* GetTransactionCount();
+	static int ParseTransactionCountResponse(const FJsonObject& data);
+
+	static FRequestData* SimulateTransaction(const FString& transaction);
+	static FSimulateTransactionInfoJson ParseSimulateTransactionResponse(const FJsonObject& data);
+
+	static FRequestData* GetBalance(const FString& pubKey);
+	static int ParseBalanceResponse(const FJsonObject& data);
+
+	static FRequestData* GetClusterNodes();
+	static TArray<FClusterNodesArrayJson> ParseClusterNodesResponse(const FJsonObject& data);
+
+	static FRequestData* GetSlot();
+	static int ParseSlotResponse(const FJsonObject& data);
 };
