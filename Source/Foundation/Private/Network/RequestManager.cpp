@@ -28,8 +28,8 @@ Contributers: Daniele Calanna, Riccardo Torrisi
 
 DECLARE_LOG_CATEGORY_CLASS(RequestManager, Log, All);
 
-static int64 LastMessageID = 0;
-static TArray<FRequestData*> PendingRequests;
+int64 LastMessageID = 0;
+TArray<FRequestData*> PendingRequests;
 
 int64 FRequestManager::GetNextMessageID()
 {

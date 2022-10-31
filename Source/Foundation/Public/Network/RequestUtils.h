@@ -18,7 +18,7 @@ Author: Jon Sawler
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RequestManager_WebSocket.h"
+#include "UFRequestManager_WB.h"
 
 struct FRequestData;
 struct FAccountInfoJson;

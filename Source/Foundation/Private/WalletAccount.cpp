@@ -20,10 +20,10 @@ Contributers: Riccardo Torrisi, Federico Arona
 #include "WalletAccount.h"
 #include "JsonObjectConverter.h"
 #include "TokenAccount.h"
-#include "Network/RequestManager.h"
-#include "Network/RequestManager_WebSocket.h"
-#include "Network/RequestUtils.h"
 #include "SolanaUtils/Utils/TransactionUtils.h"
+#include "Network/RequestManager.h"
+#include "Network/RequestUtils.h"
+#include "Network/UFRequestManager_WB.h"
 
 UFRequestManager_WB* SocketManager = NewObject<UFRequestManager_WB>();
 
@@ -207,6 +207,6 @@ double UWalletAccount::GetAcountBalance_WB(const FString& pubKey)
 	SocketManager->Init();
 	FRequestData_WB* balanceRequest = FRequestUtils::RequestAccountInfo_WB(pubKey);
 	SocketManager->SendRequest(balanceRequest);
-	return FRequestUtils::ParseAccountBalanceResponse(balanceRequest->Response);
+	return FRequestUtils::ParseAccountBalanceResponse(*balanceRequest->Response);
 }
 
