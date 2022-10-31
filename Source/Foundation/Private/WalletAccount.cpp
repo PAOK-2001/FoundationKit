@@ -18,13 +18,14 @@ Contributers: Riccardo Torrisi, Federico Arona
 */
 
 #include "WalletAccount.h"
-
 #include "JsonObjectConverter.h"
 #include "TokenAccount.h"
 #include "Network/RequestManager.h"
 #include "Network/RequestManager_WebSocket.h"
 #include "Network/RequestUtils.h"
 #include "SolanaUtils/Utils/TransactionUtils.h"
+
+UFRequestManager_WB* SocketManager = NewObject<UFRequestManager_WB>();
 
 void UWalletAccount::SetAccountName(const FString& Name)
 {
@@ -203,11 +204,9 @@ double UWalletAccount::GetSolBalance() const
 
 double UWalletAccount::GetAcountBalance_WB(const FString& pubKey)
 {
-	UFRequestManager_WB Manager_Wb;
-	Manager_Wb.Init();
+	SocketManager->Init();
 	FRequestData_WB* balanceRequest = FRequestUtils::RequestAccountInfo_WB(pubKey);
-	Manager_Wb.SendRequest(balanceRequest);
+	SocketManager->SendRequest(balanceRequest);
 	return FRequestUtils::ParseAccountBalanceResponse(balanceRequest->Response);
-	
 }
 
