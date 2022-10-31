@@ -205,7 +205,7 @@ double UWalletAccount::GetAcountBalance_WB(const FString& pubKey)
 {
 	UFRequestManager_WB Manager_Wb;
 	Manager_Wb.Init();
-	FRequestData* balanceRequest = FRequestUtils::RequestAccountBalance(pubKey);
+	FRequestData_WB* balanceRequest = FRequestUtils::RequestAccountInfo_WB(pubKey);
 	Manager_Wb.SendRequest(balanceRequest);
 	return FRequestUtils::ParseAccountBalanceResponse(balanceRequest->Response);
 	

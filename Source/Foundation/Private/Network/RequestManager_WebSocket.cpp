@@ -1,16 +1,12 @@
-#include "Network/RequestManager_WebSocket.h"
-
 #include <execution>
-
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
 #include "Network/RequestUtils.h"
+#include "Network/RequestManager_WebSocket.h"
 
-DECLARE_LOG_CATEGORY_CLASS(RequestManager_WebSocket, Log, All);
-
-static int64 LastMessageID = 0;
-static TArray<FRequestData*> PendingRequests;
+int64 LastMessageID = 0;
+TArray<FRequestData_WB*> PendingRequests;
 
 int64 UFRequestManager_WB::GetNextMessageID()
 {
@@ -35,9 +31,7 @@ void UFRequestManager_WB::Init()
 	{
 		FModuleManager::Get().LoadModule("WebSockets");
 	}
-
-	// might have to add ws to the url (the protocal)
-	// WebSocket = FWebSocketsModule::Get().CreateWebSocket("ws://localhost:8080");
+	
 	WebSocket = FWebSocketsModule::Get().CreateWebSocket(Url);
 
 	WebSocket->OnConnected().AddLambda([]()
@@ -67,15 +61,13 @@ void UFRequestManager_WB::Init()
 
 void UFRequestManager_WB::Shutdown()
 {
-
 	if(WebSocket->IsConnected())
 	{
 		WebSocket->Close();
 	}
-
 }
 
-void UFRequestManager_WB::SendRequest(FRequestData* RequestData)
+void UFRequestManager_WB::SendRequest(FRequestData_WB* RequestData)
 {
 	if (!WebSocket->IsConnected())
 	{
@@ -84,7 +76,6 @@ void UFRequestManager_WB::SendRequest(FRequestData* RequestData)
 	}
 	PendingRequests.Push(RequestData);
 	WebSocket->Send(RequestData->Body);
-
 }
 
 void UFRequestManager_WB::OnResponse(const FString &Response){
@@ -99,7 +90,7 @@ void UFRequestManager_WB::OnResponse(const FString &Response){
 			int id = ParsedJSON->GetIntegerField("id");
             if( PendingRequests.Num() > 0 )
             {
-            	FRequestData* request = *PendingRequests.FindByPredicate([&](FRequestData* data){return data->Id == id;});
+            	FRequestData_WB* request = *PendingRequests.FindByPredicate([&](FRequestData_WB* data){return data->Id == id;});
             	if(request)
             	{
             		request->Response = ParsedJSON;
@@ -120,7 +111,7 @@ void UFRequestManager_WB::OnResponse(const FString &Response){
 	}
 }
 
-void UFRequestManager_WB::CancelRequest(FRequestData* RequestData)
+void UFRequestManager_WB::CancelRequest(FRequestData_WB* RequestData)
 {
 	PendingRequests.Remove(RequestData);
 	delete RequestData;

@@ -3,18 +3,14 @@
 #include "CoreMinimal.h"
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
-DECLARE_DELEGATE_OneParam( RequestCallback, FJsonObject&);
-DECLARE_DELEGATE_OneParam( RequestErrorCallback, const FText& FailureReason);
-struct FOUNDATION_API FRequestData
+struct FOUNDATION_API FRequestData_WB
 {
-	FRequestData() {}
-	FRequestData( UINT id ) { Id = id; }
+	FRequestData_WB() {}
+	FRequestData_WB( UINT id ) { Id = id; }
 
 	UINT Id;
 	FString Body;
-	TSharedPtr<FJsonObject> Response;
-	RequestCallback Callback;
-	RequestErrorCallback ErrorCallback;
+	FJsonObject Response;
 };
 
 UCLASS(BlueprintType)
@@ -26,11 +22,11 @@ public:
     virtual void Init();
     virtual void Shutdown();
 
-    int64 GetNextMessageID();
-    int64 GetLastMessageID();
+    static int64 GetNextMessageID();
+    static int64 GetLastMessageID();
 
-    void SendRequest(FRequestData* RequestData);
-    void CancelRequest(FRequestData* RequestData);
+    void SendRequest(FRequestData_WB* RequestData);
+    void CancelRequest(FRequestData_WB* RequestData);
 
 private:
     FSocketConnected OnConnected;
