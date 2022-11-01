@@ -39,8 +39,7 @@ FRequestData* FRequestUtils::RequestAccountInfo(const FString& pubKey)
 
 FRequestData_WB* FRequestUtils::RequestAccountInfo_WB(const FString& pubKey)
 {
-	FRequestData_WB* request = new FRequestData_WB(FRequestManager::GetNextMessageID());
-
+	FRequestData_WB* request = new FRequestData_WB(UFRequestManager_WB::GetNextMessageID());
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%u,"method":"getAccountInfo","params":["%s",{"encoding": "base58"}]})")
 		,request->Id, *pubKey );

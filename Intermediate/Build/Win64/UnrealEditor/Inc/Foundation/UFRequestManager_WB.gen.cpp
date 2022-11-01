@@ -11,7 +11,7 @@ void EmptyLinkFunctionForGeneratedCodeUFRequestManager_WB() {}
 // Cross Module References
 	FOUNDATION_API UClass* Z_Construct_UClass_UFRequestManager_WB_NoRegister();
 	FOUNDATION_API UClass* Z_Construct_UClass_UFRequestManager_WB();
-	COREUOBJECT_API UClass* Z_Construct_UClass_UObject();
+	ENGINE_API UClass* Z_Construct_UClass_UGameInstance();
 	UPackage* Z_Construct_UPackage__Script_Foundation();
 // End Cross Module References
 	void UFRequestManager_WB::StaticRegisterNativesUFRequestManager_WB()
@@ -32,12 +32,11 @@ void EmptyLinkFunctionForGeneratedCodeUFRequestManager_WB() {}
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_UFRequestManager_WB_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UObject,
+		(UObject* (*)())Z_Construct_UClass_UGameInstance,
 		(UObject* (*)())Z_Construct_UPackage__Script_Foundation,
 	};
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UFRequestManager_WB_Statics::Class_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
 		{ "IncludePath", "Network/UFRequestManager_WB.h" },
 		{ "ModuleRelativePath", "Public/Network/UFRequestManager_WB.h" },
 	};
@@ -57,7 +56,7 @@ void EmptyLinkFunctionForGeneratedCodeUFRequestManager_WB() {}
 		0,
 		0,
 		0,
-		0x001000A0u,
+		0x009000A8u,
 		METADATA_PARAMS(Z_Construct_UClass_UFRequestManager_WB_Statics::Class_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UClass_UFRequestManager_WB_Statics::Class_MetaDataParams))
 	};
 	UClass* Z_Construct_UClass_UFRequestManager_WB()
@@ -78,9 +77,9 @@ void EmptyLinkFunctionForGeneratedCodeUFRequestManager_WB() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_TestingStarAtlas_Plugins_FoundationKit_Source_Foundation_Public_Network_UFRequestManager_WB_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UFRequestManager_WB, UFRequestManager_WB::StaticClass, TEXT("UFRequestManager_WB"), &Z_Registration_Info_UClass_UFRequestManager_WB, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UFRequestManager_WB), 2190328172U) },
+		{ Z_Construct_UClass_UFRequestManager_WB, UFRequestManager_WB::StaticClass, TEXT("UFRequestManager_WB"), &Z_Registration_Info_UClass_UFRequestManager_WB, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UFRequestManager_WB), 1295102189U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_TestingStarAtlas_Plugins_FoundationKit_Source_Foundation_Public_Network_UFRequestManager_WB_h_1351630221(TEXT("/Script/Foundation"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_TestingStarAtlas_Plugins_FoundationKit_Source_Foundation_Public_Network_UFRequestManager_WB_h_924703773(TEXT("/Script/Foundation"),
 		Z_CompiledInDeferFile_FID_TestingStarAtlas_Plugins_FoundationKit_Source_Foundation_Public_Network_UFRequestManager_WB_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_TestingStarAtlas_Plugins_FoundationKit_Source_Foundation_Public_Network_UFRequestManager_WB_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

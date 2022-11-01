@@ -21,7 +21,7 @@ private: \
 	static void StaticRegisterNativesUFRequestManager_WB(); \
 	friend struct Z_Construct_UClass_UFRequestManager_WB_Statics; \
 public: \
-	DECLARE_CLASS(UFRequestManager_WB, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/Foundation"), NO_API) \
+	DECLARE_CLASS(UFRequestManager_WB, UGameInstance, COMPILED_IN_FLAGS(0 | CLASS_Transient), CASTCLASS_None, TEXT("/Script/Foundation"), NO_API) \
 	DECLARE_SERIALIZER(UFRequestManager_WB)
 
 
@@ -30,7 +30,7 @@ private: \
 	static void StaticRegisterNativesUFRequestManager_WB(); \
 	friend struct Z_Construct_UClass_UFRequestManager_WB_Statics; \
 public: \
-	DECLARE_CLASS(UFRequestManager_WB, UObject, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/Foundation"), NO_API) \
+	DECLARE_CLASS(UFRequestManager_WB, UGameInstance, COMPILED_IN_FLAGS(0 | CLASS_Transient), CASTCLASS_None, TEXT("/Script/Foundation"), NO_API) \
 	DECLARE_SERIALIZER(UFRequestManager_WB)
 
 

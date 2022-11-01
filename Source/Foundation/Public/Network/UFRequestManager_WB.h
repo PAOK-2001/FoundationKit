@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WebSocketsModule.h"
+#include "Engine/GameInstance.h"
 #include "IWebSocket.h"
 #include "UFRequestManager_WB.generated.h"
 
@@ -15,14 +15,14 @@ struct FOUNDATION_API FRequestData_WB
 	FJsonObject* Response;
 };
 
-UCLASS(BlueprintType)
-class  FOUNDATION_API UFRequestManager_WB:  public UObject{
+UCLASS()
+class  FOUNDATION_API UFRequestManager_WB:  public UGameInstance{
     GENERATED_BODY()
 public:
-    DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
+    virtual void Init() override;
+    virtual void Shutdown() override;
     TSharedPtr<IWebSocket> WebSocket;
-    virtual void Init();
-    virtual void Shutdown();
+    DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
 
     static int64 GetNextMessageID();
     static int64 GetLastMessageID();

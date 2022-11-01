@@ -20,20 +20,19 @@ int64 UFRequestManager_WB::GetLastMessageID()
 
 void UFRequestManager_WB::Init()
 {
+	Super::Init();
 	FString Url = GetDefault<UFoundationSettings>()->GetNetworkURL();
     if( Url.IsEmpty() )
     {
-        Url = GetDefault<UFoundationSettings>()->GetNetwork() == ESolanaNetwork::DevNet ? "https://api.devnet.solana.com/" : "https://api.mainnet-beta.solana.com/";
+        Url = GetDefault<UFoundationSettings>()->GetNetwork() == ESolanaNetwork::DevNet ? "ws://api.devnet.solana.com/" : "ws://api.mainnet-beta.solana.com/";
     }
-
-	// Sometimes the websocket modules doesn't load by default so adding a if to make sure it does
+    
 	if (!FModuleManager::Get().IsModuleLoaded(("WebSockets")))
 	{
 		FModuleManager::Get().LoadModule("WebSockets");
 	}
-	
 	WebSocket = FWebSocketsModule::Get().CreateWebSocket(Url);
-
+	
 	WebSocket->OnConnected().AddLambda([]()
 	{
 		UFRequestManager_WB::OnConnected_Helper();
@@ -55,12 +54,14 @@ void UFRequestManager_WB::Init()
 		UFRequestManager_WB::OnResponse(Response);
 	});
 	
+	
 	WebSocket->Connect();
 	
 }
 
 void UFRequestManager_WB::Shutdown()
 {
+	Super::Shutdown();
 	if(WebSocket->IsConnected())
 	{
 		WebSocket->Close();
