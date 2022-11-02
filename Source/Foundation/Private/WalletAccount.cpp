@@ -200,11 +200,10 @@ double UWalletAccount::GetSolBalance() const
 	return Lamports.Get(0.f) / 1e9;
 }
 
-double UWalletAccount::GetAcountBalance_WB(const FString& pubKey, UFRequestManager_WB* SocketManager)
+double UWalletAccount::GetAcountBalance_WB(const FString& pubKey, UFRequestManager_WB* &SocketManager)
 {
-	SocketManager->Init();
-	FRequestData_WB* balanceRequest = FRequestUtils::RequestAccountInfo_WB(pubKey);
-	SocketManager->SendRequest(balanceRequest);
+	FSubscriptionData* balanceRequest = FRequestUtils::RequestAccountInfo_WB(pubKey);
+	SocketManager->RequestSubscription(balanceRequest);
 	return FRequestUtils::ParseAccountBalanceResponse(*balanceRequest->Response);
 }
 

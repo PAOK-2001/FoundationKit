@@ -31,7 +31,7 @@ class FOUNDATION_API FRequestUtils
 public:
 	
 	static FRequestData* RequestAccountInfo(const FString& pubKey);
-	static FRequestData_WB* RequestAccountInfo_WB(const FString& pubKey);
+	static FSubscriptionData* RequestAccountInfo_WB(const FString& pubKey);
 	static FAccountInfoJson ParseAccountInfoResponse(const FJsonObject& data);
 
 	static FRequestData* RequestAccountBalance(const FString& pubKey);

@@ -5,12 +5,13 @@
 #include "IWebSocket.h"
 #include "UFRequestManager_WB.generated.h"
 
-struct FOUNDATION_API FRequestData_WB
+struct FOUNDATION_API FSubscriptionData
 {
-	FRequestData_WB() {}
-	FRequestData_WB( UINT id ) { Id = id; }
+	FSubscriptionData() {}
+	FSubscriptionData( UINT id ) { Id = id; }
 
 	UINT Id;
+	UINT SubscriptionNumber;
 	FString Body;
 	FJsonObject* Response;
 };
@@ -24,14 +25,16 @@ public:
     TSharedPtr<IWebSocket> WebSocket;
     DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
 
-    static int64 GetNextMessageID();
-    static int64 GetLastMessageID();
+    static int64 GetNextSubID();
+    static int64 GetLastSubID();
 
-    void SendRequest(FRequestData_WB* RequestData);
-    void CancelRequest(FRequestData_WB* RequestData);
+    void RequestSubscription(FSubscriptionData* SubData);
+    void Unsubscribe(FSubscriptionData* SubData);
 
 private:
 	inline static FSocketConnected OnConnected;
     static void OnResponse(const FString &Response);
+	static void ParseNotification(const FString &Response);
+	static void ParseSubConfirmation(const FString &Response);
     static void OnConnected_Helper();
 };

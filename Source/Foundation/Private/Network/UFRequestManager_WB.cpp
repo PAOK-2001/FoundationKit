@@ -6,14 +6,14 @@
 #include <execution>
 
 int64 LastMessageID_WB = 0;
-TArray<FRequestData_WB*> PendingRequests_WB;
+TArray<FSubscriptionData*> ActiveSubscriptions;
 
-int64 UFRequestManager_WB::GetNextMessageID()
+int64 UFRequestManager_WB::GetNextSubID()
 {
 	return LastMessageID_WB++;
 }
 
-int64 UFRequestManager_WB::GetLastMessageID()
+int64 UFRequestManager_WB::GetLastSubID()
 {
 	return LastMessageID_WB;
 }
@@ -36,7 +36,7 @@ void UFRequestManager_WB::Init()
 	WebSocket->OnConnected().AddLambda([]()
 	{
 		UFRequestManager_WB::OnConnected_Helper();
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "We Did heheha!!!");
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Connection succesfull");
 	});
 
 	WebSocket->OnConnectionError().AddLambda([](const FString& Error)
@@ -51,54 +51,106 @@ void UFRequestManager_WB::Init()
 
 	WebSocket->OnMessage().AddLambda([](const FString& Response)
 	{
-		UFRequestManager_WB::OnResponse(Response);
+		OnResponse(Response);
 	});
 	
-	
 	WebSocket->Connect();
-	
 }
 
 void UFRequestManager_WB::Shutdown()
 {
-	Super::Shutdown();
 	if(WebSocket->IsConnected())
 	{
 		WebSocket->Close();
 	}
+	Super::Shutdown();
 }
 
-void UFRequestManager_WB::SendRequest(FRequestData_WB* RequestData)
+void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 {
 	if (!WebSocket->IsConnected())
 	{
-		// Don't send if we're not connected.
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Could not send message, no connection.");
 		return;
 	}
-	PendingRequests_WB.Push(RequestData);
-	WebSocket->Send(RequestData->Body);
+	ActiveSubscriptions.Push(SubData);
+	WebSocket->Send(SubData->Body);
 }
 
-void UFRequestManager_WB::OnResponse(const FString &Response){
+
+void UFRequestManager_WB::Unsubscribe(FSubscriptionData* RequestData)
+{
+	ActiveSubscriptions.Remove(RequestData);
+	delete RequestData;
+          	
+}
+
+void UFRequestManager_WB::OnConnected_Helper()
+{
+	OnConnected.Broadcast();
+}
+
+void UFRequestManager_WB::OnResponse(const FString& Response)
+{
+	TSharedPtr<FJsonObject> ParsedJSON;
+	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
+	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
+	{
+		const TSharedPtr<FJsonObject>* outObject;
+		if (ParsedJSON->TryGetObjectField("subscription", outObject))
+		{
+			ParseNotification(Response);
+		}
+		else
+		{
+			ParseSubConfirmation(Response);
+		}		
+	}
+}
+
+void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
+{
+	TSharedPtr<FJsonObject> ParsedJSON;
+	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
+
+	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
+	{
+		int id = ParsedJSON->GetIntegerField("id");
+		if( ActiveSubscriptions.Num() > 0 )
+		{
+			FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->Id == id;});
+			if(Subscription)
+			{
+				Subscription->SubscriptionNumber = ParsedJSON->GetIntegerField("result");
+			}
+		}
+		else
+		{
+			FRequestUtils::DisplayError("Failed to parse Response from the server");
+		}
+	}
+}
+
+void UFRequestManager_WB::ParseNotification(const FString& Response)
+{
 	TSharedPtr<FJsonObject> ParsedJSON;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
 
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
 		const TSharedPtr<FJsonObject>* outObject;
+		
 		if(!ParsedJSON->TryGetObjectField("error", outObject))
 		{
-			int id = ParsedJSON->GetIntegerField("id");
-            if( PendingRequests_WB.Num() > 0 )
-            {
-            	FRequestData_WB* request = *PendingRequests_WB.FindByPredicate([&](FRequestData_WB* data){return data->Id == id;});
-            	if(request)
-            	{
-            		request->Response = ParsedJSON.Get();
-            		PendingRequests_WB.Remove(request);
-            		delete request;
-            	}
-            }
+			int SubNum = ParsedJSON->GetIntegerField("subscription");
+			if( ActiveSubscriptions.Num() > 0 )
+			{
+				FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->SubscriptionNumber == SubNum;});
+				if(Subscription)
+				{
+					Subscription->Response = ParsedJSON.Get();
+				}
+			}
 		}
 		else
 		{
@@ -112,14 +164,3 @@ void UFRequestManager_WB::OnResponse(const FString &Response){
 	}
 }
 
-void UFRequestManager_WB::CancelRequest(FRequestData_WB* RequestData)
-{
-	PendingRequests_WB.Remove(RequestData);
-	delete RequestData;
-          	
-}
-
-void UFRequestManager_WB::OnConnected_Helper()
-{
-	OnConnected.Broadcast();
-}

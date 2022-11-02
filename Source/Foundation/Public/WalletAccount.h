@@ -97,7 +97,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendTokenEstimate(UTokenAccount* TokenAccount, const FString& RecipientPublicKey, float Amount) const;
 
-	double GetAcountBalance_WB(const FString& pubKey, UFRequestManager_WB* SocketManager);
+	double GetAcountBalance_WB(const FString& pubKey, UFRequestManager_WB* &SocketManager);
 
 	UFUNCTION(BlueprintPure)
 	USolanaWallet* GetOwningWallet() const { return CastChecked<USolanaWallet>(GetOuter()); }
