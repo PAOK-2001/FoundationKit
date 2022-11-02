@@ -23,6 +23,7 @@ Contributers: Riccardo Torrisi, Federico Arona
 #include "SolanaUtils/Utils/TransactionUtils.h"
 #include "Network/RequestManager.h"
 #include "Network/RequestUtils.h"
+#include "Network/SubscriptionUtils.h"
 #include "Kismet/GameplayStatics.h"
 
 void UWalletAccount::SetAccountName(const FString& Name)
@@ -200,10 +201,9 @@ double UWalletAccount::GetSolBalance() const
 	return Lamports.Get(0.f) / 1e9;
 }
 
-double UWalletAccount::GetAcountBalance_WB(const FString& pubKey, UFRequestManager_WB* &SocketManager)
+void UWalletAccount::Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB* &SocketManager)
 {
-	FSubscriptionData* balanceRequest = FRequestUtils::RequestAccountInfo_WB(pubKey);
-	SocketManager->RequestSubscription(balanceRequest);
-	return FRequestUtils::ParseAccountBalanceResponse(*balanceRequest->Response);
+	FSubscriptionData* SubRequest = FSubscriptionUtils::AccountSubscribe(pubKey);
+	SocketManager->RequestSubscription(SubRequest);
 }
 

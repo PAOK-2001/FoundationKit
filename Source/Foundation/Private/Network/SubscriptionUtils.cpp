@@ -14,35 +14,45 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include "Network/RequestUtils.h"
-
+#include "Network/SubscriptionUtils.h"
 #include "JsonObjectConverter.h"
-#include "Network/RequestManager_WebSocket.h"
+#include "Network/UFRequestManager_WB.h"
 #include "Misc/MessageDialog.h"
 #include "SolanaUtils/Utils/Types.h"
 
-static FText ErrorTitle = FText::FromString("Error");
-static FText InfoTitle = FText::FromString("Info");
+static FText ErrorMessage = FText::FromString("Error");
+static FText InfoMessage = FText::FromString("Info");
 
+TMap<FString, FSubscriptionData*> SubcriptionMap;
 FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	int SubID = UFRequestManager_WB::GetNextSubID();
+	FSubscriptionData* request = new FSubscriptionData(SubID);
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
-	
+
+	SubcriptionMap.Add("AccountInfo",request);
 	return request;
 }
 
-int FSubscriptionUtils::ParseAccountSubscribeResponse(const FJsonObject& data)
+double FSubscriptionUtils::GetAccountSubInfo()
 {
-    return data.GetNumberField("result");
+	FJsonObject* data = SubcriptionMap["AccountInfo"]->Response;
+	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	{
+		if(TSharedPtr<FJsonObject> result = params->GetObjectField("result"))
+		{
+			return result->GetNumberField("lamports");
+		}
+	}
+	return -1.0;
 }
 
 FSubscriptionData* FSubscriptionUtils::AccountUnsubscribe(const UINT& idAccount)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountUnsubscribe","params":[%d]})")
@@ -58,7 +68,7 @@ bool FSubscriptionUtils::ParseAccountUnsubscribeResponse(const FJsonObject& data
 
 FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsSubscribe","params":["all"]})")
@@ -74,7 +84,7 @@ int FSubscriptionUtils::ParseLogsSubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::LogsUnsubscribe(const UINT& suscriptionID)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
@@ -90,7 +100,7 @@ bool FSubscriptionUtils::ParseLogsUnsubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programSubscribe","params":["%s"]})")
@@ -106,7 +116,7 @@ int FSubscriptionUtils::ParseProgramSubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::ProgramUnsubscribe(const UINT& idAccount)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
@@ -122,7 +132,7 @@ bool FSubscriptionUtils::ParseProgramUnsubscribeResponse(const FJsonObject& data
 
 FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signature)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureSubscribe","params":["%s"]})")
@@ -138,7 +148,7 @@ int FSubscriptionUtils::ParseSignatureSubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::SignatureUnsubscribe(const UINT& suscriptionID)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
@@ -154,7 +164,7 @@ bool FSubscriptionUtils::ParseSignatureUnsubscribeResponse(const FJsonObject& da
 
 FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotSubscribe"})")
@@ -170,7 +180,7 @@ int FSubscriptionUtils::ParseSlotSubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::SlotUnsubscribe(const UINT& suscriptionID)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
@@ -186,7 +196,7 @@ bool FSubscriptionUtils::ParseSlotUnsubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootSubscribe"})")
@@ -202,7 +212,7 @@ int FSubscriptionUtils::ParseRootSubscribeResponse(const FJsonObject& data)
 
 FSubscriptionData* FSubscriptionUtils::RootUnsubscribe(const UINT& suscriptionID)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextMessageID());
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
@@ -218,10 +228,10 @@ bool FSubscriptionUtils::ParseRootUnsubscribeResponse(const FJsonObject& data)
 
 void FSubscriptionUtils::DisplayError(const FString& error)
 {
-	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(error), &ErrorTitle);
+	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(error), &ErrorMessage);
 }
 
 void FSubscriptionUtils::DisplayInfo(const FString& info)
 {
-	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(info), &InfoTitle);
+	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(info), &InfoMessage);
 }

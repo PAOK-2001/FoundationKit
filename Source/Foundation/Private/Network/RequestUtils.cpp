@@ -37,16 +37,6 @@ FRequestData* FRequestUtils::RequestAccountInfo(const FString& pubKey)
 	return request;
 }
 
-FSubscriptionData* FRequestUtils::RequestAccountInfo_WB(const FString& pubKey)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%u,"method":"getAccountInfo","params":["%s",{"encoding": "base58"}]})")
-		,request->Id, *pubKey );
-
-	return request;
-}
-
 FAccountInfoJson FRequestUtils::ParseAccountInfoResponse(const FJsonObject& data)
 {
 	FAccountInfoJson jsonData;

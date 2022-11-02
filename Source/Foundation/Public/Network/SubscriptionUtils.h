@@ -25,7 +25,7 @@ class FOUNDATION_API FSubscriptionUtils
 public:
 	
 	static FSubscriptionData* AccountSubscribe(const FString& pubKey);
-	static int ParseAccountSubscribeResponse(const FJsonObject& data);
+	static double GetAccountSubInfo();
 
 	static FSubscriptionData* AccountUnsubscribe(const UINT& idAccount);
 	static bool ParseAccountUnsubscribeResponse(const FJsonObject& data);

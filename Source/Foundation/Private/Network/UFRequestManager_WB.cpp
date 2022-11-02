@@ -75,6 +75,8 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 	}
 	ActiveSubscriptions.Push(SubData);
 	WebSocket->Send(SubData->Body);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subscription Requested");
+
 }
 
 
@@ -122,6 +124,8 @@ void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 			if(Subscription)
 			{
 				Subscription->SubscriptionNumber = ParsedJSON->GetIntegerField("result");
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Confirmed");
+
 			}
 		}
 		else
