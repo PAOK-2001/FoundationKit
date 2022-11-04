@@ -30,7 +30,7 @@ FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey)
 	FSubscriptionData* request = new FSubscriptionData(SubID);
 	
 	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s",{"encoding": "base58","commitment": "finalized"}]})")
 			,request->Id , *pubKey );
 
 	SubcriptionMap.Add("AccountInfo",request);

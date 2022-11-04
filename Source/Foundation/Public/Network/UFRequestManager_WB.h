@@ -11,7 +11,7 @@ struct FOUNDATION_API FSubscriptionData
 	FSubscriptionData( UINT id ) { Id = id; }
 
 	UINT Id;
-	UINT SubscriptionNumber;
+	UINT SubscriptionNumber = 0;
 	FString Body;
 	FJsonObject* Response;
 };

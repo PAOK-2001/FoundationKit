@@ -51,6 +51,7 @@ void UFRequestManager_WB::Init()
 
 	WebSocket->OnMessage().AddLambda([](const FString& Response)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, "Message received");
 		OnResponse(Response);
 	});
 	
@@ -70,12 +71,12 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 {
 	if (!WebSocket->IsConnected())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Could not send message, no connection.");
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Could not send message, no connection.");
 		return;
 	}
 	ActiveSubscriptions.Push(SubData);
 	WebSocket->Send(SubData->Body);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subscription Requested");
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "Subscription Requested");
 
 }
 
@@ -94,19 +95,24 @@ void UFRequestManager_WB::OnConnected_Helper()
 
 void UFRequestManager_WB::OnResponse(const FString& Response)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, Response);
+
 	TSharedPtr<FJsonObject> ParsedJSON;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
-		const TSharedPtr<FJsonObject>* outObject;
-		if (ParsedJSON->TryGetObjectField("subscription", outObject))
+		float SubId;
+		const TSharedPtr<FJsonObject>* params;
+		if(ParsedJSON->TryGetNumberField("id", SubId))
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, "Attempting to parse confirmation");
+			ParseSubConfirmation(Response);
+		}
+		if (ParsedJSON->TryGetObjectField("params", params))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, "Attempting to parse notification");
 			ParseNotification(Response);
 		}
-		else
-		{
-			ParseSubConfirmation(Response);
-		}		
 	}
 }
 
@@ -118,13 +124,13 @@ void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
 		int id = ParsedJSON->GetIntegerField("id");
-		if( ActiveSubscriptions.Num() > 0 )
+		if(ActiveSubscriptions.Num() > 0 )
 		{
 			FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->Id == id;});
 			if(Subscription)
 			{
 				Subscription->SubscriptionNumber = ParsedJSON->GetIntegerField("result");
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Confirmed");
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcribed with number: " + FString::FromInt(ParsedJSON->GetIntegerField("result")));
 
 			}
 		}
@@ -142,25 +148,17 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
-		const TSharedPtr<FJsonObject>* outObject;
-		
-		if(!ParsedJSON->TryGetObjectField("error", outObject))
+		int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
+		if( ActiveSubscriptions.Num() > 0 )
 		{
-			int SubNum = ParsedJSON->GetIntegerField("subscription");
-			if( ActiveSubscriptions.Num() > 0 )
+			FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->SubscriptionNumber == SubNum;});
+			if(Subscription)
 			{
-				FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->SubscriptionNumber == SubNum;});
-				if(Subscription)
-				{
-					Subscription->Response = ParsedJSON.Get();
-				}
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Updated");
+				Subscription->Response = ParsedJSON.Get();
 			}
 		}
-		else
-		{
-			const TSharedPtr<FJsonObject> error = ParsedJSON->GetObjectField("error");
-			FRequestUtils::DisplayError(error->GetStringField("message"));
-		}
+		
 	}
 	else
 	{
