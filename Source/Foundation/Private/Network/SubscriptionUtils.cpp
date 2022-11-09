@@ -30,7 +30,7 @@ FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey)
 	FSubscriptionData* request = new FSubscriptionData(SubID);
 	
 	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s",{"encoding": "base58","commitment": "finalized"}]})")
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
 
 	SubcriptionMap.Add("AccountInfo",request);
@@ -42,10 +42,9 @@ double FSubscriptionUtils::GetAccountSubInfo()
 	FJsonObject* data = SubcriptionMap["AccountInfo"]->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
-		if(TSharedPtr<FJsonObject> result = params->GetObjectField("result"))
-		{
-			return result->GetNumberField("lamports");
-		}
+		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
+		return value->GetNumberField("lamports");
 	}
 	return -1.0;
 }

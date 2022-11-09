@@ -85,7 +85,8 @@ void UFRequestManager_WB::Unsubscribe(FSubscriptionData* RequestData)
 {
 	ActiveSubscriptions.Remove(RequestData);
 	delete RequestData;
-          	
+	// Send unsuscribe to the websocket
+				 	
 }
 
 void UFRequestManager_WB::OnConnected_Helper()

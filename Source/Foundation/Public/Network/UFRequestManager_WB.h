@@ -20,7 +20,7 @@ UCLASS()
 class  FOUNDATION_API UFRequestManager_WB:  public UGameInstance{
     GENERATED_BODY()
 public:
-    virtual void Init() override;
+    virtual void Init() override; // Disable shutdown timer
     virtual void Shutdown() override;
     TSharedPtr<IWebSocket> WebSocket;
     DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
