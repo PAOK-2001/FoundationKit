@@ -196,6 +196,39 @@ void UWalletAccount::SendTokenEstimate(UTokenAccount* TokenAccount, const FStrin
 	FRequestManager::SendRequest(accountRequest);
 }
 
+void UWalletAccount::TransactionCount()
+{
+	FRequestData* request = FRequestUtils::GetTransactionCount();
+
+	request->Callback.BindLambda([this](FJsonObject& data) {
+		int transactionData = FRequestUtils::ParseTransactionCount(data);
+		FRequestUtils::DisplayInfo(FString::Printf(TEXT("Transaction Count: %d"), transactionData));
+		});
+	FRequestManager::SendRequest(request);
+}
+
+void UWalletAccount::GetBalanceInfo()
+{
+	FRequestData* request = FRequestUtils::GetBalance(AccountData.PublicKey);
+
+	request->Callback.BindLambda([this](FJsonObject& data) {
+		int balance = FRequestUtils::ParseBalanceResponse(data);
+		FRequestUtils::DisplayInfo(FString::Printf(TEXT("Balance of the account: %d"), balance));
+		});
+	FRequestManager::SendRequest(request);
+}
+
+void UWalletAccount::GetSlotInfo()
+{
+	FRequestData* request = FRequestUtils::GetSlot();
+
+	request->Callback.BindLambda([this](FJsonObject& data) {
+		int slot = FRequestUtils::ParseSlotResponse(data);
+		FRequestUtils::DisplayInfo(FString::Printf(TEXT("Current Slot: %d"), slot));
+		});
+	FRequestManager::SendRequest(request);
+}
+
 double UWalletAccount::GetSolBalance() const
 {
 	return Lamports.Get(0.f) / 1e9;

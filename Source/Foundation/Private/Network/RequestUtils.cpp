@@ -258,6 +258,132 @@ FRequestData* FRequestUtils::RequestAirDrop(const FString& pubKey)
 	return request;
 }
 
+RequestData* FRequestUtils::GetTransaction(const FString& transaction)
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"getTransaction", "params":[%s,jsonParsed]})")
+			, request->Id, *transaction);
+
+	return request;
+
+}
+
+FGetTransactionInfoJson FRequestUtils::ParseGetTransactionResponse(const FJsonObject& data)
+{
+	FGetTransactionInfoJson jsonData;
+	if(TSharedPtr<FJsonObject> result = data.GetObjectField("result"))
+	{
+		FJsonObjectConverter::JsonObjectToUStruct(result.ToSharedRef(), &jsonData);
+	}
+	return jsonData;
+}
+
+FRequestData* FRequestUtils::GetTransactionCount()
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"getTransactionCount"})")
+			, request->Id);
+
+	return request;
+}
+
+int FRequestUtils::ParseTransactionCount(const FJsonObject& data)
+{
+	int transactionCount = 0;
+	if (TSharedPtr<FJsonObject> result = data.GetObjectField("result"))
+	{
+		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
+		transactionCount = value->GetNumberField("value");
+	}
+	return transactionCount;
+}
+
+FRequestData* FRequestUtils::SimulateTransaction(const FString& transaction)
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"simulateTransaction", "params":[%s,{"commitment":"processed"}]})")
+			, request->Id, *transaction);
+
+	return request;
+}
+
+FSimulateTransactionInfoJson FRequestUtils::ParseSimulateTransactionResponse(const FJsonObject& data)
+{
+	FSimulateTransactionInfoJson jsonData;
+	if(TSharedPtr<FJsonObject> result = data.GetObjectField("result"))
+	{
+		const TSharedPtr<FJsonObject> resultData = result->GetObjectField("value");
+		FJsonObjectConverter::JsonObjectToUStruct(resultData.ToSharedRef(), &jsonData);
+	}
+	return jsonData;
+}
+
+FRequestData* FRequestUtils::GetClusterNodes()
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"getClusterNodes"})")
+			, request->Id);
+
+	return request;
+}
+
+TArray<FClusterNodesArrayJson> FRequestUtils::ParseClusterNodesResponse(const FJsonObject& data)
+{
+	FClusterNodesArrayJson jsonData;
+	if(TSharedPtr<FJsonObject> result = data.GetObjectField("result"))
+	{
+		FJsonObjectConverter::JsonObjectToUStruct(result.ToSharedRef(), &jsonData);
+	}
+	return jsonData;
+}
+
+FRequestData* FRequestUtils::GetSlot()
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"getSlot"})")
+			, request->Id);
+
+	return request;
+}
+
+int FRequestUtils::ParseSlotResponse(const FJsonObject& data)
+{
+	return data.GetNumberField("result");
+}
+
+RequestData* FRequestUtils::GetBalance(const FString& transaction)
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"getBalance", "params":[%s,{"commitment":"processed"}]})")
+			, request->Id, *transaction);
+
+	return request;
+
+}
+
+int FRequestUtils::ParseBalanceResponse(const FJsonObject& data)
+{
+	int balance = 0;
+	if (TSharedPtr<FJsonObject> result = data.GetObjectField("result"))
+	{
+		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
+		balance = value->GetNumberField("value");
+	}
+	return balance;
+}
+
 void FRequestUtils::DisplayError(const FString& error)
 {
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(error), &ErrorTitle);

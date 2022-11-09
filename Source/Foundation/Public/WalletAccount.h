@@ -101,4 +101,8 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USolanaWallet* GetOwningWallet() const { return CastChecked<USolanaWallet>(GetOuter()); }
+
+	void TransactionCount();
+	void GetBalanceInfo();
+	void GetSlotInfo();
 };
