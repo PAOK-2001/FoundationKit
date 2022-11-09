@@ -73,12 +73,21 @@ FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsSubscribe","params":["all"]})")
 			,request->Id );
 	
+	SubcriptionMap.Add("LogsSubscribe",request);
+	
 	return request;
 }
 
-int FSubscriptionUtils::ParseLogsSubscribeResponse(const FJsonObject& data)
+FString FSubscriptionUtils::ParseLogsSubscribeResponse(const FJsonObject& data)
 {
-    return data.GetNumberField("result");
+	FJsonObject* data = SubcriptionMap["LogsSubscribe"]->Response;
+	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	{
+		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> value = params->GetObjectField("value");
+		return result->GetStringField("signature");
+	}
+	return "empty";
 }
 
 FSubscriptionData* FSubscriptionUtils::LogsUnsubscribe(const UINT& suscriptionID)
@@ -105,12 +114,22 @@ FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
 	
+	SubcriptionMap.Add("ProgramSubscribe",request);
+
 	return request;
 }
 
 int FSubscriptionUtils::ParseProgramSubscribeResponse(const FJsonObject& data)
 {
-    return data.GetNumberField("result");
+	FJsonObject* data = SubcriptionMap["ProgramSubscribe"]->Response;
+	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	{
+		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
+		const TSharedPtr<FJsonObject> account = result->GetObjectField("account");
+		return account->GetNumberField("lamports");
+	}
+	return -1.0;
 }
 
 FSubscriptionData* FSubscriptionUtils::ProgramUnsubscribe(const UINT& idAccount)
@@ -137,12 +156,21 @@ FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signatu
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureSubscribe","params":["%s"]})")
 			,request->Id , *signature );
 	
+	SubcriptionMap.Add("SignatureSubscribe",request);
+	
 	return request;
 }
 
-int FSubscriptionUtils::ParseSignatureSubscribeResponse(const FJsonObject& data)
+TSharedPtr<FJsonObject> FSubscriptionUtils::ParseSignatureSubscribeResponse(const FJsonObject& data)
 {
-    return data.GetNumberField("result");
+	FJsonObject* data = SubcriptionMap["SignatureSubscribe"]->Response;
+	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	{
+		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
+		return account->GetObjectField("err");
+	}
+	return NULL;
 }
 
 FSubscriptionData* FSubscriptionUtils::SignatureUnsubscribe(const UINT& suscriptionID)
@@ -169,12 +197,20 @@ FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotSubscribe"})")
 			,request->Id );
 	
+	SubcriptionMap.Add("SlotSubscribe",request);
+
 	return request;
 }
 
 int FSubscriptionUtils::ParseSlotSubscribeResponse(const FJsonObject& data)
 {
-    return data.GetNumberField("result");
+	FJsonObject* data = SubcriptionMap["SlotSubscribe"]->Response;
+	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	{
+		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		return result->GetNumberField("parent");
+	}
+	return -1;
 }
 
 FSubscriptionData* FSubscriptionUtils::SlotUnsubscribe(const UINT& suscriptionID)
@@ -200,13 +236,20 @@ FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootSubscribe"})")
 			,request->Id );
-	
+
+	SubcriptionMap.Add("RootSubscribe",request);
+
 	return request;
 }
 
 int FSubscriptionUtils::ParseRootSubscribeResponse(const FJsonObject& data)
 {
-    return data.GetNumberField("result");
+	FJsonObject* data = SubcriptionMap["RootSubscribe"]->Response;
+	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	{
+		return params->GetNumberField("result");
+	}
+	return -1;
 }
 
 FSubscriptionData* FSubscriptionUtils::RootUnsubscribe(const UINT& suscriptionID)

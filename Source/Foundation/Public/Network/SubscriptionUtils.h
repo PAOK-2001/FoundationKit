@@ -31,7 +31,7 @@ public:
 	static bool ParseAccountUnsubscribeResponse(const FJsonObject& data);
 
 	static FSubscriptionData* LogsSubscribe();
-	static int ParseLogsSubscribeResponse(const FJsonObject& data);
+	static FString ParseLogsSubscribeResponse(const FJsonObject& data);
 
 	static FSubscriptionData* LogsUnsubscribe(const UINT& suscriptionID);
 	static bool ParseLogsUnsubscribeResponse(const FJsonObject& data);
@@ -46,7 +46,7 @@ public:
 	static int ParseSignatureSubscribeResponse(const FJsonObject& data);
 	
 	static FSubscriptionData* SignatureUnsubscribe(const UINT& suscriptionID);
-	static bool ParseSignatureUnsubscribeResponse(const FJsonObject& data);
+	static TSharedPtr<FJsonObject> ParseSignatureUnsubscribeResponse(const FJsonObject& data);
 
 	static FSubscriptionData* SlotSubscribe();
 	static int ParseSlotSubscribeResponse(const FJsonObject& data);
