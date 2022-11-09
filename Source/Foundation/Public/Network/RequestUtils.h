@@ -18,6 +18,7 @@ Author: Jon Sawler
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UFRequestManager_WB.h"
 
 struct FRequestData;
 struct FAccountInfoJson;
@@ -30,6 +31,7 @@ class FOUNDATION_API FRequestUtils
 public:
 	
 	static FRequestData* RequestAccountInfo(const FString& pubKey);
+	static FSubscriptionData* RequestAccountInfo_WB(const FString& pubKey);
 	static FAccountInfoJson ParseAccountInfoResponse(const FJsonObject& data);
 
 	static FRequestData* RequestAccountBalance(const FString& pubKey);

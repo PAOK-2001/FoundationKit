@@ -1,0 +1,23 @@
+{
+    "Version": "1.1",
+    "Data": {
+        "Source": "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\keypair.c",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\stdint.h",
+            "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\vcruntime.h",
+            "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\sal.h",
+            "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\concurrencysal.h",
+            "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\vadefs.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\ed25519.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.17763.0\\ucrt\\stddef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.17763.0\\ucrt\\corecrt.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\ed_sha512.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\fixedint.h",
+            "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\limits.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\ge.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\fe.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\crypto\\ed25519\\fixedint.h"
+        ]
+    }
+}
