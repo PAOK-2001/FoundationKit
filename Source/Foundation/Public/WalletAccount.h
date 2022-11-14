@@ -98,6 +98,8 @@ public:
 	void SendTokenEstimate(UTokenAccount* TokenAccount, const FString& RecipientPublicKey, float Amount) const;
 
 	void Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB* &SocketManager);
+	void UnSub2AccountInfo(const int& pubKey, UFRequestManager_WB* &SocketManager);
+	double ReadSub(const int& ID);
 
 	UFUNCTION(BlueprintPure)
 	USolanaWallet* GetOwningWallet() const { return CastChecked<USolanaWallet>(GetOuter()); }

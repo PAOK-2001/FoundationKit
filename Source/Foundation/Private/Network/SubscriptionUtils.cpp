@@ -23,23 +23,27 @@ limitations under the License.
 static FText ErrorMessage = FText::FromString("Error");
 static FText InfoMessage = FText::FromString("Info");
 
-TMap<FString, FSubscriptionData*> SubcriptionMap;
-FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey)
-{
+FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey){
 	int SubID = UFRequestManager_WB::GetNextSubID();
 	FSubscriptionData* request = new FSubscriptionData(SubID);
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
-
-	SubcriptionMap.Add("AccountInfo",request);
+	
 	return request;
 }
 
-double FSubscriptionUtils::GetAccountSubInfo()
+void FSubscriptionUtils::AccountUnsubscribe(FSubscriptionData* sub2remove)
 {
-	FJsonObject* data = SubcriptionMap["AccountInfo"]->Response;
+	int UnsubID = UFRequestManager_WB::GetNextSubID();
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountUnsubscribe","params":[%d]})")
+			,UnsubID , sub2remove->Id );
+}
+
+double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
+	FJsonObject* data = sub2read->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
@@ -49,17 +53,7 @@ double FSubscriptionUtils::GetAccountSubInfo()
 	return -1.0;
 }
 
-FSubscriptionData* FSubscriptionUtils::AccountUnsubscribe(const UINT& idAccount)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountUnsubscribe","params":[%d]})")
-			,request->Id , idAccount );
-	
-	return request;
-}
-
+/*
 bool FSubscriptionUtils::ParseAccountUnsubscribeResponse(const FJsonObject& data)
 {
     return data.GetBoolField("result");
@@ -276,4 +270,4 @@ void FSubscriptionUtils::DisplayError(const FString& error)
 void FSubscriptionUtils::DisplayInfo(const FString& info)
 {
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(info), &InfoMessage);
-}
+}*/

@@ -2,7 +2,7 @@
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
-#include "Network/RequestUtils.h"
+#include "Network/SubscriptionUtils.h"
 #include <execution>
 
 int64 LastMessageID_WB = 0;
@@ -85,10 +85,17 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 
 void UFRequestManager_WB::Unsubscribe(int subID)
 {
+	FSubscriptionUtils::AccountUnsubscribe(ActiveSubscriptionsMap[subID]);
 	WebSocket->Send(ActiveSubscriptionsMap[subID]->UnsubMsg);
 	ActiveSubscriptionsMap.Remove(subID);
           	
 }
+
+auto UFRequestManager_WB::GetAccountInfo(int subID)
+{
+	 return FSubscriptionUtils::GetAccountSubInfo(ActiveSubscriptionsMap[subID]);
+}
+
 
 void UFRequestManager_WB::OnConnected_Helper()
 {

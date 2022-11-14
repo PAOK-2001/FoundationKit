@@ -18,19 +18,21 @@ struct FOUNDATION_API FSubscriptionData
 };
 
 UCLASS()
-class  FOUNDATION_API UFRequestManager_WB:  public UGameInstance{
-    GENERATED_BODY()
+class  FOUNDATION_API UFRequestManager_WB:  public UGameInstance
+{
+	GENERATED_BODY()
 public:
-    virtual void Init() override;
-    virtual void Shutdown() override;
-    TSharedPtr<IWebSocket> WebSocket;
-    DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
+	virtual void Init() override;
+	virtual void Shutdown() override;
+	TSharedPtr<IWebSocket> WebSocket;
+	DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
 
-    static int64 GetNextSubID();
-    static int64 GetLastSubID();
+	static int64 GetNextSubID();
+	static int64 GetLastSubID();
 
-    void RequestSubscription(FSubscriptionData* SubData);
-    void Unsubscribe(int subID);
+	void RequestSubscription(FSubscriptionData* SubData);
+	void Unsubscribe(int subID);
+	auto GetAccountInfo(int subID);
 
 private:
 	inline static FSocketConnected OnConnected;

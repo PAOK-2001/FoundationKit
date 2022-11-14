@@ -207,3 +207,8 @@ void UWalletAccount::Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB*
 	SocketManager->RequestSubscription(SubRequest);
 }
 
+void UWalletAccount::UnSub2AccountInfo(const int& ID2Remove, UFRequestManager_WB*& SocketManager)
+{
+	SocketManager->Unsubscribe(ID2Remove);
+}
+

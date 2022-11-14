@@ -23,30 +23,30 @@ struct FSubscriptionData;
 class FOUNDATION_API FSubscriptionUtils
 {
 public:
-	
 	static FSubscriptionData* AccountSubscribe(const FString& pubKey);
-	static double GetAccountSubInfo();
+	static void AccountUnsubscribe(FSubscriptionData* sub2remove);
+	static double GetAccountSubInfo(FSubscriptionData* sub2read);
 
-	static FSubscriptionData* AccountUnsubscribe(const UINT& idAccount);
+	/*static FString ParseLogsSubscribeResponse(const FJsonObject& data);
 	static bool ParseAccountUnsubscribeResponse(const FJsonObject& data);
 
 	static FSubscriptionData* LogsSubscribe();
-	static FString ParseLogsSubscribeResponse(const FJsonObject& data);
-
 	static FSubscriptionData* LogsUnsubscribe(const UINT& suscriptionID);
 	static bool ParseLogsUnsubscribeResponse(const FJsonObject& data);
 
+
 	static FSubscriptionData* ProgramSubscribe(const FString& pubKey);
+	static FSubscriptionData* ProgramUnsubscribe(const UINT& idAccount);
 	static int ParseProgramSubscribeResponse(const FJsonObject& data);
 	
-	static FSubscriptionData* ProgramUnsubscribe(const UINT& idAccount);
-	static bool ParseProgramUnsubscribeResponse(const FJsonObject& data);
-
 	static FSubscriptionData* SignatureSubscribe(const FString& signature);
-	static int ParseSignatureSubscribeResponse(const FJsonObject& data);
-	
 	static FSubscriptionData* SignatureUnsubscribe(const UINT& suscriptionID);
+	
+	static int ParseSignatureSubscribeResponse(const FJsonObject& data);
 	static TSharedPtr<FJsonObject> ParseSignatureUnsubscribeResponse(const FJsonObject& data);
+
+	static bool ParseProgramUnsubscribeResponse(const FJsonObject& data);
+	
 
 	static FSubscriptionData* SlotSubscribe();
 	static int ParseSlotSubscribeResponse(const FJsonObject& data);
@@ -61,5 +61,5 @@ public:
 	static bool ParseRootUnsubscribeResponse(const FJsonObject& data);
 
 	static void DisplayError(const FString& error);
-	static void DisplayInfo(const FString& info);
+	static void DisplayInfo(const FString& info);*/
 };
