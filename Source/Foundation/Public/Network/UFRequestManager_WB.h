@@ -13,6 +13,7 @@ struct FOUNDATION_API FSubscriptionData
 	UINT Id;
 	UINT SubscriptionNumber;
 	FString Body;
+	FString UnsubMsg;
 	FJsonObject* Response;
 };
 
@@ -29,7 +30,7 @@ public:
     static int64 GetLastSubID();
 
     void RequestSubscription(FSubscriptionData* SubData);
-    void Unsubscribe(FSubscriptionData* SubData);
+    void Unsubscribe(int subID);
 
 private:
 	inline static FSocketConnected OnConnected;

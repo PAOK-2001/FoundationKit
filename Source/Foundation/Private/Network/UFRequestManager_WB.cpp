@@ -6,7 +6,9 @@
 #include <execution>
 
 int64 LastMessageID_WB = 0;
+
 TArray<FSubscriptionData*> ActiveSubscriptions;
+TMap<int, FSubscriptionData*> ActiveSubscriptionsMap;
 
 int64 UFRequestManager_WB::GetNextSubID()
 {
@@ -74,16 +76,17 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 		return;
 	}
 	ActiveSubscriptions.Push(SubData);
+	ActiveSubscriptionsMap.Add(SubData->Id, SubData);
 	WebSocket->Send(SubData->Body);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subscription Requested");
 
 }
 
 
-void UFRequestManager_WB::Unsubscribe(FSubscriptionData* RequestData)
+void UFRequestManager_WB::Unsubscribe(int subID)
 {
-	ActiveSubscriptions.Remove(RequestData);
-	delete RequestData;
+	WebSocket->Send(ActiveSubscriptionsMap[subID]->UnsubMsg);
+	ActiveSubscriptionsMap.Remove(subID);
           	
 }
 
@@ -106,7 +109,7 @@ void UFRequestManager_WB::OnResponse(const FString& Response)
 		else
 		{
 			ParseSubConfirmation(Response);
-		}		
+		}	
 	}
 }
 
