@@ -55,6 +55,10 @@ public:
 	
 	static FRequestData* SendTransaction(const FString& transaction);
 	static FString ParseTransactionResponse(const FJsonObject& data);
+
+	static FRequestData* GetTransaction(const FString& transaction);
+	static FString ParseGetTransactionResponse(const FJsonObject& data);
+	
 	
 	static FRequestData* RequestAirDrop(const FString& pubKey);
 

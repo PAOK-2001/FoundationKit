@@ -214,6 +214,23 @@ FRequestData* FRequestUtils::RequestBlockHash()
 	return request;
 }
 
+FRequestData* FRequestUtils::GetTransaction(const FString& transaction)
+{
+	FRequestData* request = new FRequestData(FRequestManager::GetNextMessageID());
+
+	request->Body =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"getTransaction","params":["%s",{"encoding": "base64"}]})")
+			,request->Id, *transaction );
+	
+	return request;
+
+}
+
+FString FRequestUtils::ParseTransactionResponse(const FJsonObject& data)
+{
+	return data.GetStringField("result");
+}
+
 FString FRequestUtils::ParseBlockHashResponse(const FJsonObject& data)
 {
 	FString hash;
