@@ -226,11 +226,6 @@ FRequestData* FRequestUtils::GetTransaction(const FString& transaction)
 
 }
 
-FString FRequestUtils::ParseTransactionResponse(const FJsonObject& data)
-{
-	return data.GetStringField("result");
-}
-
 FString FRequestUtils::ParseBlockHashResponse(const FJsonObject& data)
 {
 	FString hash;
