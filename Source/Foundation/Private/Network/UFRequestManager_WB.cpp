@@ -3,6 +3,7 @@
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
 #include "Network/SubscriptionUtils.h"
+#include "Network/RequestUtils.h"
 #include <execution>
 
 int64 LastMessageID_WB = 0;
@@ -91,9 +92,9 @@ void UFRequestManager_WB::Unsubscribe(int subID)
           	
 }
 
-auto UFRequestManager_WB::GetAccountInfo(int subID)
+FSubscriptionData* UFRequestManager_WB::GetSubData(int subID)
 {
-	 return FSubscriptionUtils::GetAccountSubInfo(ActiveSubscriptionsMap[subID]);
+	 return ActiveSubscriptionsMap[subID]; 
 }
 
 
@@ -128,9 +129,9 @@ void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
 		int id = ParsedJSON->GetIntegerField("id");
-		if( ActiveSubscriptions.Num() > 0 )
+		if( !ActiveSubscriptionsMap.IsEmpty())
 		{
-			FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->Id == id;});
+			FSubscriptionData* Subscription = ActiveSubscriptionsMap[id];
 			if(Subscription)
 			{
 				Subscription->SubscriptionNumber = ParsedJSON->GetIntegerField("result");
@@ -157,10 +158,19 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 		if(!ParsedJSON->TryGetObjectField("error", outObject))
 		{
 			int SubNum = ParsedJSON->GetIntegerField("subscription");
-			if( ActiveSubscriptions.Num() > 0 )
+			bool isValidSub = false;
+			if(!ActiveSubscriptionsMap.IsEmpty())
 			{
+				for (auto& Elem : ActiveSubscriptionsMap)
+				{
+					if(Elem.Value->SubscriptionNumber == SubNum)
+					{
+						FSubscriptionData* Subscription = Elem.Value;
+						isValidSub = true;
+					}
+				}
 				FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->SubscriptionNumber == SubNum;});
-				if(Subscription)
+				if(isValidSub)
 				{
 					Subscription->Response = ParsedJSON.Get();
 				}

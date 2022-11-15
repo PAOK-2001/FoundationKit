@@ -32,7 +32,7 @@ public:
 
 	void RequestSubscription(FSubscriptionData* SubData);
 	void Unsubscribe(int subID);
-	auto GetAccountInfo(int subID);
+	FSubscriptionData* GetSubData(int subID);
 
 private:
 	inline static FSocketConnected OnConnected;

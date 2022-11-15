@@ -212,3 +212,10 @@ void UWalletAccount::UnSub2AccountInfo(const int& ID2Remove, UFRequestManager_WB
 	SocketManager->Unsubscribe(ID2Remove);
 }
 
+double UWalletAccount::ReadSub(int ID, UFRequestManager_WB*& SocketManager)
+{
+	FSubscriptionData* subData = SocketManager->GetSubData(ID);
+	return FSubscriptionUtils::GetAccountSubInfo(subData);
+	
+}
+
