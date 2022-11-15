@@ -24,12 +24,13 @@ static FText ErrorMessage = FText::FromString("Error");
 static FText InfoMessage = FText::FromString("Info");
 
 FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey){
-	int SubID = UFRequestManager_WB::GetNextSubID();
-	FSubscriptionData* request = new FSubscriptionData(SubID);
+	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
+	
+	SubcriptionMap.Add("LogsSubscribe",request);
 	
 	return request;
 }
@@ -53,12 +54,6 @@ double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
 	return -1.0;
 }
 
-/*
-bool FSubscriptionUtils::ParseAccountUnsubscribeResponse(const FJsonObject& data)
-{
-    return data.GetBoolField("result");
-}
-
 FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 {
 	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
@@ -72,9 +67,17 @@ FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 	return request;
 }
 
-FString FSubscriptionUtils::ParseLogsSubscribeResponse(const FJsonObject& data)
+void FSubscriptionUtils::LogsUnsubscribe(FSubscriptionData* sub2remove)
 {
-	FJsonObject* data = SubcriptionMap["LogsSubscribe"]->Response;
+	int UnsubID = UFRequestManager_WB::GetNextSubID();
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
+			,UnsubID , sub2remove->Id );
+}
+
+FString FSubscriptionUtils::GetLogsSubInfo(FSubscriptionData* sub2read)
+{
+	FJsonObject* data = sub2read->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
@@ -82,22 +85,6 @@ FString FSubscriptionUtils::ParseLogsSubscribeResponse(const FJsonObject& data)
 		return result->GetStringField("signature");
 	}
 	return "empty";
-}
-
-FSubscriptionData* FSubscriptionUtils::LogsUnsubscribe(const UINT& suscriptionID)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
-			,request->Id , suscriptionID );
-	
-	return request;
-}
-
-bool FSubscriptionUtils::ParseLogsUnsubscribeResponse(const FJsonObject& data)
-{
-    return data.GetBoolField("result");
 }
 
 FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
@@ -113,9 +100,17 @@ FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 	return request;
 }
 
-int FSubscriptionUtils::ParseProgramSubscribeResponse(const FJsonObject& data)
+void FSubscriptionUtils::ProgramUnsubscribe(FSubscriptionData* sub2remove)
 {
-	FJsonObject* data = SubcriptionMap["ProgramSubscribe"]->Response;
+	int UnsubID = UFRequestManager_WB::GetNextSubID();
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
+			,UnsubID , sub2remove->Id );
+}
+
+int FSubscriptionUtils::GetProgramSubInfo(FSubscriptionData* sub2read)
+{
+	FJsonObject* data = sub2read->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
@@ -124,22 +119,6 @@ int FSubscriptionUtils::ParseProgramSubscribeResponse(const FJsonObject& data)
 		return account->GetNumberField("lamports");
 	}
 	return -1.0;
-}
-
-FSubscriptionData* FSubscriptionUtils::ProgramUnsubscribe(const UINT& idAccount)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
-			,request->Id , idAccount );
-	
-	return request;
-}
-
-bool FSubscriptionUtils::ParseProgramUnsubscribeResponse(const FJsonObject& data)
-{
-    return data.GetBoolField("result");
 }
 
 FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signature)
@@ -155,9 +134,17 @@ FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signatu
 	return request;
 }
 
-TSharedPtr<FJsonObject> FSubscriptionUtils::ParseSignatureSubscribeResponse(const FJsonObject& data)
+void FSubscriptionUtils::SignatureUnsubscribe(FSubscriptionData* sub2remove)
 {
-	FJsonObject* data = SubcriptionMap["SignatureSubscribe"]->Response;
+	int UnsubID = UFRequestManager_WB::GetNextSubID();
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
+			,UnsubID , sub2remove->Id );
+}
+
+TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionData* sub2read)
+{
+	FJsonObject* data = sub2read->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
@@ -165,22 +152,6 @@ TSharedPtr<FJsonObject> FSubscriptionUtils::ParseSignatureSubscribeResponse(cons
 		return account->GetObjectField("err");
 	}
 	return NULL;
-}
-
-FSubscriptionData* FSubscriptionUtils::SignatureUnsubscribe(const UINT& suscriptionID)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
-			,request->Id , suscriptionID );
-	
-	return request;
-}
-
-bool FSubscriptionUtils::ParseSignatureUnsubscribeResponse(const FJsonObject& data)
-{
-    return data.GetBoolField("result");
 }
 
 FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
@@ -196,31 +167,23 @@ FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 	return request;
 }
 
-int FSubscriptionUtils::ParseSlotSubscribeResponse(const FJsonObject& data)
+void FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* sub2remove)
 {
-	FJsonObject* data = SubcriptionMap["SlotSubscribe"]->Response;
+	int UnsubID = UFRequestManager_WB::GetNextSubID();
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
+			,UnsubID , sub2remove->Id );
+}
+
+int FSubscriptionUtils::GetSlotSubInfo(FSubscriptionData* sub2read)
+{
+	FJsonObject* data = sub2read->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
 		return result->GetNumberField("parent");
 	}
 	return -1;
-}
-
-FSubscriptionData* FSubscriptionUtils::SlotUnsubscribe(const UINT& suscriptionID)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
-			,request->Id , suscriptionID );
-	
-	return request;
-}
-
-bool FSubscriptionUtils::ParseSlotUnsubscribeResponse(const FJsonObject& data)
-{
-    return data.GetBoolField("result");
 }
 
 FSubscriptionData* FSubscriptionUtils::RootSubscribe()
@@ -236,30 +199,22 @@ FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 	return request;
 }
 
-int FSubscriptionUtils::ParseRootSubscribeResponse(const FJsonObject& data)
+void FSubscriptionUtils::RootUnsubscribe(FSubscriptionData* sub2remove)
 {
-	FJsonObject* data = SubcriptionMap["RootSubscribe"]->Response;
+	int UnsubID = UFRequestManager_WB::GetNextSubID();
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
+			,UnsubID , sub2remove->Id );
+}
+
+int FSubscriptionUtils::GetRootSubInfo(FSubscriptionData* sub2read)
+{
+	FJsonObject* data = sub2read->Response;
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		return params->GetNumberField("result");
 	}
 	return -1;
-}
-
-FSubscriptionData* FSubscriptionUtils::RootUnsubscribe(const UINT& suscriptionID)
-{
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
-	
-	request->Body =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
-			,request->Id , suscriptionID );
-	
-	return request;
-}
-
-bool FSubscriptionUtils::ParseRootUnsubscribeResponse(const FJsonObject& data)
-{
-    return data.GetBoolField("result");
 }
 
 void FSubscriptionUtils::DisplayError(const FString& error)
@@ -270,4 +225,4 @@ void FSubscriptionUtils::DisplayError(const FString& error)
 void FSubscriptionUtils::DisplayInfo(const FString& info)
 {
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(info), &InfoMessage);
-}*/
+}

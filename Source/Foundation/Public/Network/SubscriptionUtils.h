@@ -17,6 +17,7 @@ limitations under the License.
 #pragma once
 
 #include "CoreMinimal.h"
+#include "JsonObjectConverter.h"
 
 struct FSubscriptionData;
 
@@ -27,39 +28,26 @@ public:
 	static void AccountUnsubscribe(FSubscriptionData* sub2remove);
 	static double GetAccountSubInfo(FSubscriptionData* sub2read);
 
-	/*static FString ParseLogsSubscribeResponse(const FJsonObject& data);
-	static bool ParseAccountUnsubscribeResponse(const FJsonObject& data);
-
 	static FSubscriptionData* LogsSubscribe();
-	static FSubscriptionData* LogsUnsubscribe(const UINT& suscriptionID);
-	static bool ParseLogsUnsubscribeResponse(const FJsonObject& data);
-
+	static void LogsUnsubscribe(FSubscriptionData* sub2remove);
+	static FString GetLogsSubInfo(FSubscriptionData* sub2read);
 
 	static FSubscriptionData* ProgramSubscribe(const FString& pubKey);
-	static FSubscriptionData* ProgramUnsubscribe(const UINT& idAccount);
-	static int ParseProgramSubscribeResponse(const FJsonObject& data);
-	
-	static FSubscriptionData* SignatureSubscribe(const FString& signature);
-	static FSubscriptionData* SignatureUnsubscribe(const UINT& suscriptionID);
-	
-	static int ParseSignatureSubscribeResponse(const FJsonObject& data);
-	static TSharedPtr<FJsonObject> ParseSignatureUnsubscribeResponse(const FJsonObject& data);
+	static void ProgramUnsubscribe(FSubscriptionData* sub2remove);
+	static int GetProgramSubInfo(FSubscriptionData* sub2read);
 
-	static bool ParseProgramUnsubscribeResponse(const FJsonObject& data);
-	
+	static FSubscriptionData* SignatureSubscribe(const FString& signature);
+	static void SignatureUnsubscribe(FSubscriptionData* sub2remove);
+	static TSharedPtr<FJsonObject> GetSignatureSubInfo(FSubscriptionData* sub2read);
 
 	static FSubscriptionData* SlotSubscribe();
-	static int ParseSlotSubscribeResponse(const FJsonObject& data);
-
-	static FSubscriptionData* SlotUnsubscribe(const UINT& suscriptionID);
-	static bool ParseSlotUnsubscribeResponse(const FJsonObject& data);
+	static void SlotUnsubscribe(FSubscriptionData* sub2remove);
+	static int GetSlotSubInfo(FSubscriptionData* sub2read);
 
 	static FSubscriptionData* RootSubscribe();
-	static int ParseRootSubscribeResponse(const FJsonObject& data);
-
-	static FSubscriptionData* RootUnsubscribe(const UINT& suscriptionID);
-	static bool ParseRootUnsubscribeResponse(const FJsonObject& data);
+	static void RootUnsubscribe(FSubscriptionData* sub2remove);
+	static int GetRootSubInfo(FSubscriptionData* sub2read);
 
 	static void DisplayError(const FString& error);
-	static void DisplayInfo(const FString& info);*/
+	static void DisplayInfo(const FString& info);
 };
