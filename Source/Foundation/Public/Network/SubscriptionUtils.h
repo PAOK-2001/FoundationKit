@@ -17,7 +17,6 @@ limitations under the License.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "JsonObjectConverter.h"
 
 struct FSubscriptionData;
 
