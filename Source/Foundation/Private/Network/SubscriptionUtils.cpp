@@ -29,9 +29,6 @@ FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey){
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
-	
-	SubcriptionMap.Add("LogsSubscribe",request);
-	
 	return request;
 }
 
@@ -61,9 +58,6 @@ FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsSubscribe","params":["all"]})")
 			,request->Id );
-	
-	SubcriptionMap.Add("LogsSubscribe",request);
-	
 	return request;
 }
 
@@ -95,8 +89,6 @@ FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
 	
-	SubcriptionMap.Add("ProgramSubscribe",request);
-
 	return request;
 }
 
@@ -128,9 +120,7 @@ FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signatu
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureSubscribe","params":["%s"]})")
 			,request->Id , *signature );
-	
-	SubcriptionMap.Add("SignatureSubscribe",request);
-	
+		
 	return request;
 }
 
@@ -149,7 +139,7 @@ TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionDat
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
 		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
-		return account->GetObjectField("err");
+		return value->GetObjectField("err");
 	}
 	return NULL;
 }
@@ -162,8 +152,6 @@ FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotSubscribe"})")
 			,request->Id );
 	
-	SubcriptionMap.Add("SlotSubscribe",request);
-
 	return request;
 }
 
@@ -193,9 +181,7 @@ FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootSubscribe"})")
 			,request->Id );
-
-	SubcriptionMap.Add("RootSubscribe",request);
-
+	
 	return request;
 }
 
