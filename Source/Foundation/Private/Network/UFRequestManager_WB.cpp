@@ -84,9 +84,10 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 
 void UFRequestManager_WB::Unsubscribe(int subID)
 {
-	FSubscriptionUtils::AccountUnsubscribe(ActiveSubscriptionsMap[subID]);
+	FString S = ActiveSubscriptionsMap[subID]->UnsubMsg;
 	WebSocket->Send(ActiveSubscriptionsMap[subID]->UnsubMsg);
 	ActiveSubscriptionsMap.Remove(subID);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Subscription eliminated");
           	
 }
 
