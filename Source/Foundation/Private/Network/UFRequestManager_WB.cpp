@@ -160,11 +160,11 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 		
 		if(!ParsedJSON->TryGetObjectField("error", outObject))
 		{
-			int SubNum = ParsedJSON->GetIntegerField("subscription");
+			const int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
 			FSubscriptionData* Subscription;
 			if(!ActiveSubscriptionsMap.IsEmpty())
 			{
-				for (auto& Elem : ActiveSubscriptionsMap)
+				for (const TTuple<int, FSubscriptionData*>& Elem : ActiveSubscriptionsMap)
 				{
 					if(Elem.Value->SubscriptionNumber == SubNum)
 					{
