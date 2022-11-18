@@ -8,8 +8,6 @@
 
 int64 LastMessageID_WB = 0;
 
-TMap<int, FSubscriptionData*> ActiveSubscriptionsMap;
-
 int64 UFRequestManager_WB::GetNextSubID()
 {
 	return LastMessageID_WB++;
@@ -84,11 +82,8 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 
 void UFRequestManager_WB::Unsubscribe(int subID)
 {
-	FString S = ActiveSubscriptionsMap[subID]->UnsubMsg;
 	WebSocket->Send(ActiveSubscriptionsMap[subID]->UnsubMsg);
-	ActiveSubscriptionsMap.Remove(subID);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Subscription eliminated");
-          	
+	ActiveSubscriptionsMap.Remove(subID); // Do this only if unsub is succesfull        	
 }
 
 FSubscriptionData* UFRequestManager_WB::GetSubData(int subID)
@@ -104,7 +99,7 @@ void UFRequestManager_WB::OnConnected_Helper()
 
 void UFRequestManager_WB::OnResponse(const FString& Response)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, Response);
+	GEngine->AddOnScreenDebugMessage(-1, 17.0f, FColor::Purple, Response);
 
 	TSharedPtr<FJsonObject> ParsedJSON;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
@@ -145,7 +140,16 @@ void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 		}
 		else
 		{
-			FRequestUtils::DisplayError("Failed to parse Response from the server");
+			if(ParsedJSON->GetBoolField("result"))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "UnSubcription Confirmed");
+				// Declare an event
+				// Delete the object from hashmap
+			}else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "UnSubcription failed");
+			}
+				
 		}
 	}
 }

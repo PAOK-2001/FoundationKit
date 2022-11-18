@@ -28,10 +28,14 @@ FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey){
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
-	request->UnsubMsg =
-		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountUnsubscribe","params":[%d]})")
-			, UFRequestManager_WB::GetNextSubID(), request->Id );
 	return request;
+}
+
+void FSubscriptionUtils::AccountUnsubscribe(FSubscriptionData* sub2remove)
+{
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountUnsubscribe","params":[%d]})")
+			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber); // The parameter to unsub is subscription number NOT ID.
 }
 
 double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
@@ -129,7 +133,7 @@ FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 			,request->Id );
 	request->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
-			,UFRequestManager_WB::GetNextSubID( , request->Id );
+			,UFRequestManager_WB::GetNextSubID( ), request->Id );
 	return request;
 }
 

@@ -29,6 +29,7 @@ public:
 
 	static int64 GetNextSubID();
 	static int64 GetLastSubID();
+	inline  static TMap<int, FSubscriptionData*> ActiveSubscriptionsMap;
 
 	void RequestSubscription(FSubscriptionData* SubData);
 	void Unsubscribe(int subID);
