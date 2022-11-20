@@ -21,9 +21,12 @@ FString TransactionUtils::GetTransactionErr(TransactionData* info2read)
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("result"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("meta");
-		return result->GetStringField("err");
+        result->GetStringField("err")
+        if ( result != NULL){
+            return result
+        }
 	}
-	return "empty";
+	return "NO ERROR, TRANSACTION SUCCEEDED";
 } 
 
 int TransactionUtils::GetTransactionFee(TransactionData* info2read)
