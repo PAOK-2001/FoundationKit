@@ -61,6 +61,13 @@ FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 	return request;
 }
 
+FSubscriptionData* FSubscriptionUtils::LogsUnsubscribe(FSubscriptionData* sub2remove)
+ {
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
+			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+ }
+
 FString FSubscriptionUtils::GetLogsSubInfo(FSubscriptionData* sub2read)
 {
 	FJsonObject* data = sub2read->Response;
@@ -84,6 +91,13 @@ FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 			,UFRequestManager_WB::GetNextSubID() , request->Id );
 	return request;
 }
+
+FSubscriptionData* FSubscriptionUtils::ProgramUnsubscribe(FSubscriptionData* sub2remove)
+ {
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
+			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+ }
 
 int FSubscriptionUtils::GetProgramSubInfo(FSubscriptionData* sub2read)
 {
@@ -112,6 +126,13 @@ FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signatu
 	return request;
 }
 
+FSubscriptionData* FSubscriptionUtils::SignatureUnsubscribe(FSubscriptionData* sub2remove)
+ {
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
+			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+ }
+
 TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionData* sub2read)
 {
 	FJsonObject* data = sub2read->Response;
@@ -137,6 +158,13 @@ FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 	return request;
 }
 
+FSubscriptionData* FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* sub2remove)
+ {
+	sub2remove->UnsubMsg =
+		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
+			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+ }
+
 int FSubscriptionUtils::GetSlotSubInfo(FSubscriptionData* sub2read)
 {
 	FJsonObject* data = sub2read->Response;
@@ -160,6 +188,13 @@ FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 	
 	return request;
 }
+
+FSubscriptionData* FSubscriptionUtils::RootUnsubscribe(const UINT& suscriptionID)
+ {
+	sub2remove->UnsubMsg =
+ 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
+			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+ }
 
 int FSubscriptionUtils::GetRootSubInfo(FSubscriptionData* sub2read)
 {
