@@ -2,11 +2,12 @@
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
-#include "Network/SubscriptionUtils.h"
 #include "Network/RequestUtils.h"
+#include "TimerManager.h"
 #include <execution>
 
 int64 LastMessageID_WB = 0;
+FTimerHandle HeartbeatHandler;
 
 int64 UFRequestManager_WB::GetNextSubID()
 {
@@ -35,7 +36,7 @@ void UFRequestManager_WB::Init()
 	
 	WebSocket->OnConnected().AddLambda([]()
 	{
-		UFRequestManager_WB::OnConnected_Helper();
+		OnConnected_Helper();
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Connection succesfull");
 	});
 
@@ -119,6 +120,17 @@ void UFRequestManager_WB::OnResponse(const FString& Response)
 		}
 	}
 }
+
+void  UFRequestManager_WB::HeartbeatHelper()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Heartbeat sent!");
+}
+
+void UFRequestManager_WB::HeartbeatInit(){
+	this->WebSocket->Send("ping");
+	this->GetWorld()->GetTimerManager().SetTimer(HeartbeatHandler,this, &UFRequestManager_WB::HeartbeatHelper,60.0,true,-1);
+}
+
 
 void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 {

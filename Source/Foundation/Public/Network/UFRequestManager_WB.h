@@ -34,6 +34,9 @@ public:
 	void RequestSubscription(FSubscriptionData* SubData);
 	void Unsubscribe(int subID);
 	FSubscriptionData* GetSubData(int subID);
+	void HeartbeatInit();
+	UFUNCTION()
+	void HeartbeatHelper();
 
 private:
 	inline static FSocketConnected OnConnected;

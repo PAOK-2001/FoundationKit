@@ -61,8 +61,8 @@ FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 	return request;
 }
 
-FSubscriptionData* FSubscriptionUtils::LogsUnsubscribe(FSubscriptionData* sub2remove)
- {
+void FSubscriptionUtils::LogsUnsubscribe(FSubscriptionData* sub2remove)
+{
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
 			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
@@ -92,7 +92,7 @@ FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 	return request;
 }
 
-FSubscriptionData* FSubscriptionUtils::ProgramUnsubscribe(FSubscriptionData* sub2remove)
+void FSubscriptionUtils::ProgramUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
@@ -126,7 +126,7 @@ FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signatu
 	return request;
 }
 
-FSubscriptionData* FSubscriptionUtils::SignatureUnsubscribe(FSubscriptionData* sub2remove)
+void FSubscriptionUtils::SignatureUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
@@ -158,7 +158,7 @@ FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 	return request;
 }
 
-FSubscriptionData* FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* sub2remove)
+void FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
@@ -189,7 +189,7 @@ FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 	return request;
 }
 
-FSubscriptionData* FSubscriptionUtils::RootUnsubscribe(const UINT& suscriptionID)
+void FSubscriptionUtils::RootUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
  		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
