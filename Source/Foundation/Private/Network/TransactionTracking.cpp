@@ -57,3 +57,21 @@ int TransactionUtils::GetTransactionCountInfo(TransactionData* info2read)
 	}
 	return NULL;
 }
+
+FString TransactionUtils::GetPreBalances(TransactionData* info2read) {
+	FJsonObject* data = info2read->Response;
+	if(TShared<FJsonObject> params = data->GetObjectField("result")) {
+		const TSharedPtr<FJsonObject> result = params->GetObjectField("meta");
+		return result->GetArrayField("preBalances");
+	}
+	return NULL;
+}
+
+FString TransactionUtils::GetPostBalances(Transaction* info2read) {
+	FJsonObject* data = info2read->Reponse;
+	if (TShared<FJsonObject> params = data->getObjectField("result")) {
+		const TSharedPtr<FJsonObject> result = pramms-> GetObjectField("meta");
+		return result->GetArrayField("postBalances");
+	}
+	return NULL;
+}
