@@ -52,6 +52,7 @@ void UFRequestManager_WB::Init()
 
 	WebSocket->OnMessage().AddLambda([](const FString& Response)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, "Message received");
 		OnResponse(Response);
 	});
 	
@@ -72,7 +73,7 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 {
 	if (!WebSocket->IsConnected())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Could not send message, no connection.");
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Could not send message, no connection.");
 		return;
 	}
 	WebSocket->Send(SubData->Body);
@@ -182,9 +183,8 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
-		const TSharedPtr<FJsonObject>* outObject;
-		
-		if(!ParsedJSON->TryGetObjectField("error", outObject))
+		int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
+		if( ActiveSubscriptions.Num() > 0 )
 		{
 			const int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
 			FSubscriptionData* Subscription;
@@ -201,11 +201,7 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 				}
 			}
 		}
-		else
-		{
-			const TSharedPtr<FJsonObject> error = ParsedJSON->GetObjectField("error");
-			FRequestUtils::DisplayError(error->GetStringField("message"));
-		}
+		
 	}
 	else
 	{
