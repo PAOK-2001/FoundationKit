@@ -197,7 +197,7 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 					{
 						Subscription = Elem.Value;
 						GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Updated");
-						Subscription->Response = ParsedJSON.Get();
+						Subscription->Response = ParsedJSON->GetObjectField("params");
 					}
 				}
 			}

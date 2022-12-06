@@ -220,4 +220,3 @@ double UWalletAccount::ReadSub(int ID, UFRequestManager_WB*& SocketManager)
 	return FSubscriptionUtils::GetAccountSubInfo(subData);
 	
 }
-

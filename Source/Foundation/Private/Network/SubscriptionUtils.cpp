@@ -39,16 +39,16 @@ void FSubscriptionUtils::AccountUnsubscribe(FSubscriptionData* sub2remove)
 }
 
 double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
-	FJsonObject* data = sub2read->Response;
-	// Continue testing to see if double is the correct type
-	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	if(sub2read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
 		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
 		return value->GetNumberField("lamports");
+	}else{
+		return -1.0;
 	}
-	return -1.0;
 }
+
 
 FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 {
@@ -71,11 +71,10 @@ void FSubscriptionUtils::LogsUnsubscribe(FSubscriptionData* sub2remove)
 
 FString FSubscriptionUtils::GetLogsSubInfo(FSubscriptionData* sub2read)
 {
-	FJsonObject* data = sub2read->Response;
-	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	if(sub2read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
-		const TSharedPtr<FJsonObject> value = params->GetObjectField("value");
+		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
+		const TSharedPtr<FJsonObject> value = sub2read->Response->GetObjectField("value");
 		return result->GetStringField("signature");
 	}
 	return "empty";
@@ -102,10 +101,9 @@ void FSubscriptionUtils::ProgramUnsubscribe(FSubscriptionData* sub2remove)
 
 int FSubscriptionUtils::GetProgramSubInfo(FSubscriptionData* sub2read)
 {
-	FJsonObject* data = sub2read->Response;
-	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	if(sub2read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
 		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
 		const TSharedPtr<FJsonObject> account = result->GetObjectField("account");
 		return account->GetNumberField("lamports");
@@ -136,10 +134,9 @@ void FSubscriptionUtils::SignatureUnsubscribe(FSubscriptionData* sub2remove)
 
 TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionData* sub2read)
 {
-	FJsonObject* data = sub2read->Response;
-	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	if(sub2read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
 		return result;
 	
 	}
@@ -168,10 +165,9 @@ void FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* sub2remove)
 
 int FSubscriptionUtils::GetSlotSubInfo(FSubscriptionData* sub2read)
 {
-	FJsonObject* data = sub2read->Response;
-	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	if(sub2read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
+		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
 		return result->GetNumberField("parent");
 	}
 	return -1;
@@ -199,10 +195,9 @@ void FSubscriptionUtils::RootUnsubscribe(FSubscriptionData* sub2remove)
 
 int FSubscriptionUtils::GetRootSubInfo(FSubscriptionData* sub2read)
 {
-	FJsonObject* data = sub2read->Response;
-	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
+	if(sub2read->Response.IsValid())
 	{
-		return params->GetNumberField("result");
+		return sub2read->Response->GetNumberField("result");
 	}
 	return -1;
 }

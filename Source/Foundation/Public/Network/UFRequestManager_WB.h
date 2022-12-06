@@ -14,7 +14,7 @@ struct FOUNDATION_API FSubscriptionData
 	UINT SubscriptionNumber = 0;
 	FString Body;
 	FString UnsubMsg;
-	FJsonObject* Response;
+	TSharedPtr<FJsonObject> Response;
 };
 
 UCLASS()
