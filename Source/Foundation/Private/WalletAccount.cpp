@@ -203,6 +203,7 @@ double UWalletAccount::GetSolBalance() const
 
 void UWalletAccount::Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB* &SocketManager)
 {
+	SocketManager->HeartbeatInit();
 	FSubscriptionData* SubRequest = FSubscriptionUtils::AccountSubscribe(pubKey);
 	SocketManager->RequestSubscription(SubRequest);
 }

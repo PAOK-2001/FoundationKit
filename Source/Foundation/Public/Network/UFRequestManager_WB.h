@@ -11,7 +11,7 @@ struct FOUNDATION_API FSubscriptionData
 	FSubscriptionData( UINT id ) { Id = id; }
 
 	UINT Id;
-	UINT SubscriptionNumber;
+	UINT SubscriptionNumber = 0;
 	FString Body;
 	FString UnsubMsg;
 	FJsonObject* Response;
@@ -34,6 +34,9 @@ public:
 	void RequestSubscription(FSubscriptionData* SubData);
 	void Unsubscribe(int subID);
 	FSubscriptionData* GetSubData(int subID);
+	void HeartbeatInit();
+	UFUNCTION()
+	void HeartbeatHelper();
 
 private:
 	inline static FSocketConnected OnConnected;

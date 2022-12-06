@@ -2,11 +2,12 @@
 #include "WebSocketsModule.h"
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
-#include "Network/SubscriptionUtils.h"
 #include "Network/RequestUtils.h"
+#include "TimerManager.h"
 #include <execution>
 
 int64 LastMessageID_WB = 0;
+FTimerHandle HeartbeatHandler;
 
 int64 UFRequestManager_WB::GetNextSubID()
 {
@@ -35,7 +36,7 @@ void UFRequestManager_WB::Init()
 	
 	WebSocket->OnConnected().AddLambda([]()
 	{
-		UFRequestManager_WB::OnConnected_Helper();
+		OnConnected_Helper();
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Connection succesfull");
 	});
 
@@ -51,6 +52,7 @@ void UFRequestManager_WB::Init()
 
 	WebSocket->OnMessage().AddLambda([](const FString& Response)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, "Message received");
 		OnResponse(Response);
 	});
 	
@@ -61,6 +63,7 @@ void UFRequestManager_WB::Shutdown()
 {
 	if(WebSocket->IsConnected())
 	{
+		// Stop the timer
 		WebSocket->Close();
 	}
 	Super::Shutdown();
@@ -70,7 +73,7 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 {
 	if (!WebSocket->IsConnected())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Could not send message, no connection.");
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Could not send message, no connection.");
 		return;
 	}
 	WebSocket->Send(SubData->Body);
@@ -83,7 +86,6 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 void UFRequestManager_WB::Unsubscribe(int subID)
 {
 	WebSocket->Send(ActiveSubscriptionsMap[subID]->UnsubMsg);
-	ActiveSubscriptionsMap.Remove(subID); // Do this only if unsub is succesfull        	
 }
 
 FSubscriptionData* UFRequestManager_WB::GetSubData(int subID)
@@ -120,6 +122,24 @@ void UFRequestManager_WB::OnResponse(const FString& Response)
 	}
 }
 
+void  UFRequestManager_WB::HeartbeatHelper()
+{
+	// Check if wb != NULL
+	if(WebSocket != nullptr)
+	{
+		if(WebSocket->IsConnected())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Heartbeat sent!");
+			WebSocket->Send("ping");
+			
+		}	
+	}
+}
+
+void UFRequestManager_WB::HeartbeatInit(){
+	GetWorld()->GetTimerManager().SetTimer(HeartbeatHandler,this, &UFRequestManager_WB::HeartbeatHelper,30.0,true,-1);
+}
+
 void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 {
 	TSharedPtr<FJsonObject> ParsedJSON;
@@ -142,12 +162,14 @@ void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 		{
 			if(ParsedJSON->GetBoolField("result"))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "UnSubcription Confirmed");
-				// Declare an event
 				// Delete the object from hashmap
+				ActiveSubscriptionsMap.Remove(id);
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Unsubcription Confirmed");
+				
 			}else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "UnSubcription failed");
+				// Declare on fail
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Unsubcription failed");
 			}
 				
 		}
@@ -191,4 +213,3 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 		FRequestUtils::DisplayError("Failed to parse Response from the server");
 	}
 }
-
