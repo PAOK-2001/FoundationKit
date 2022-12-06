@@ -17,25 +17,14 @@ limitations under the License.
 #pragma once
 
 #include "CoreMinimal.h"
-
-struct TransactionData
-// parsed info based on different functions to allow max flexiably for gettng information
+#include "UFRequestManager_WB.h"
 
 class FOUNDATION_API TransactionUtils
 {
 public:
-	static TransactionUtils* GetTransaction(const Fstring& pubKey); //done
-	static FString GetTransactionErr(TransactionData* info2read); //done 
-	static int GetTransactionFee(TransactionData* info2read); //done 
-	static FString GetPostBalances(TransactionData* info2read);
-	static FString GetPreBalances(TransactionData* info2read);
-	static FString GetPreTokenBalances(TransactionData* info2read);
-	static FString GetTransactionSignatures(TransactionData* info2read);
-	
-
-
-	static TransactionUtils* GetTransactionCount(const Fstring& pubKey); //done
-	static int GetTransactionCountInfo(TransactionData* info2read); // done
+	static void Sub2Transaction(FString TransactionSignature, UFRequestManager_WB* &SocketManager); 
+	static int GetTransactionErr(int transactionID, UFRequestManager_WB* &SocketManager); 
+	static int GetTransactionSlot(int transactionID, UFRequestManager_WB* &SocketManager);
 
 	static void DisplayError(const FString& error);
 	static void DisplayInfo(const FString& info);

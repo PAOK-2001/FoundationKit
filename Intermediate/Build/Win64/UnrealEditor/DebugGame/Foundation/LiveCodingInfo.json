@@ -15,6 +15,7 @@
 			"RequestManager.cpp.obj",
 			"RequestUtils.cpp.obj",
 			"SubscriptionUtils.cpp.obj",
+			"TransactionTracking.cpp.obj",
 			"UFRequestManager_WB.cpp.obj",
 			"Account.cpp.obj",
 			"Instructions.cpp.obj",

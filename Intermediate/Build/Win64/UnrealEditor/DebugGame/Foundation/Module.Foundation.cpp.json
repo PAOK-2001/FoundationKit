@@ -275,6 +275,8 @@
             "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\intermediate\\build\\win64\\unrealeditor\\inc\\foundation\\types.generated.h",
             "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\network\\subscriptionutils.cpp",
             "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\public\\network\\subscriptionutils.h",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\network\\transactiontracking.cpp",
+            "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\public\\network\\transactiontracking.h",
             "d:\\testing-staratlas\\testingstaratlas\\plugins\\foundationkit\\source\\foundation\\private\\network\\ufrequestmanager_wb.cpp",
             "c:\\program files\\epic games\\ue_5.0\\engine\\source\\runtime\\online\\websockets\\public\\websocketsmodule.h",
             "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.29.30133\\include\\execution",

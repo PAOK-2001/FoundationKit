@@ -40,6 +40,7 @@ void FSubscriptionUtils::AccountUnsubscribe(FSubscriptionData* sub2remove)
 
 double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
 	FJsonObject* data = sub2read->Response;
+	// Continue testing to see if double is the correct type
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
@@ -139,8 +140,8 @@ TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionDat
 	if(TSharedPtr<FJsonObject> params = data->GetObjectField("params"))
 	{
 		const TSharedPtr<FJsonObject> result = params->GetObjectField("result");
-		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
-		return value->GetObjectField("err");
+		return result;
+	
 	}
 	return NULL;
 }
@@ -215,3 +216,6 @@ void FSubscriptionUtils::DisplayInfo(const FString& info)
 {
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(info), &InfoMessage);
 }
+
+// Use simulateTransaction RPC
+// Track that signature
