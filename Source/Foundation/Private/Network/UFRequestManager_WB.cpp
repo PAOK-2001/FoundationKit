@@ -3,10 +3,11 @@
 #include "IWebSocket.h"
 #include "FoundationSettings.h"
 #include "Network/RequestUtils.h"
+#include "TimerManager.h"
 #include <execution>
 
 int64 LastMessageID_WB = 0;
-TArray<FSubscriptionData*> ActiveSubscriptions;
+FTimerHandle HeartbeatHandler;
 
 int64 UFRequestManager_WB::GetNextSubID()
 {
@@ -35,7 +36,7 @@ void UFRequestManager_WB::Init()
 	
 	WebSocket->OnConnected().AddLambda([]()
 	{
-		UFRequestManager_WB::OnConnected_Helper();
+		OnConnected_Helper();
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Connection succesfull");
 	});
 
@@ -62,6 +63,7 @@ void UFRequestManager_WB::Shutdown()
 {
 	if(WebSocket->IsConnected())
 	{
+		// Stop the timer
 		WebSocket->Close();
 	}
 	Super::Shutdown();
@@ -74,20 +76,23 @@ void UFRequestManager_WB::RequestSubscription(FSubscriptionData* SubData)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Could not send message, no connection.");
 		return;
 	}
-	ActiveSubscriptions.Push(SubData);
 	WebSocket->Send(SubData->Body);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "Subscription Requested");
+	ActiveSubscriptionsMap.Add(SubData->Id, SubData);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subscription Requested");
 
 }
 
 
-void UFRequestManager_WB::Unsubscribe(FSubscriptionData* RequestData)
+void UFRequestManager_WB::Unsubscribe(int subID)
 {
-	ActiveSubscriptions.Remove(RequestData);
-	delete RequestData;
-	// Send unsuscribe to the websocket
-				 	
+	WebSocket->Send(ActiveSubscriptionsMap[subID]->UnsubMsg);
 }
+
+FSubscriptionData* UFRequestManager_WB::GetSubData(int subID)
+{
+	 return ActiveSubscriptionsMap[subID]; 
+}
+
 
 void UFRequestManager_WB::OnConnected_Helper()
 {
@@ -96,7 +101,7 @@ void UFRequestManager_WB::OnConnected_Helper()
 
 void UFRequestManager_WB::OnResponse(const FString& Response)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, Response);
+	GEngine->AddOnScreenDebugMessage(-1, 17.0f, FColor::Purple, Response);
 
 	TSharedPtr<FJsonObject> ParsedJSON;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response);
@@ -117,6 +122,24 @@ void UFRequestManager_WB::OnResponse(const FString& Response)
 	}
 }
 
+void  UFRequestManager_WB::HeartbeatHelper()
+{
+	// Check if wb != NULL
+	if(WebSocket != nullptr)
+	{
+		if(WebSocket->IsConnected())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Heartbeat sent!");
+			WebSocket->Send("ping");
+			
+		}	
+	}
+}
+
+void UFRequestManager_WB::HeartbeatInit(){
+	GetWorld()->GetTimerManager().SetTimer(HeartbeatHandler,this, &UFRequestManager_WB::HeartbeatHelper,30.0,true,-1);
+}
+
 void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 {
 	TSharedPtr<FJsonObject> ParsedJSON;
@@ -125,19 +148,30 @@ void UFRequestManager_WB::ParseSubConfirmation(const FString& Response)
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
 		int id = ParsedJSON->GetIntegerField("id");
-		if(ActiveSubscriptions.Num() > 0 )
+		if( !ActiveSubscriptionsMap.IsEmpty())
 		{
-			FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->Id == id;});
+			FSubscriptionData* Subscription = ActiveSubscriptionsMap[id];
 			if(Subscription)
 			{
 				Subscription->SubscriptionNumber = ParsedJSON->GetIntegerField("result");
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcribed with number: " + FString::FromInt(ParsedJSON->GetIntegerField("result")));
-
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Confirmed");
+				
 			}
 		}
 		else
 		{
-			FRequestUtils::DisplayError("Failed to parse Response from the server");
+			if(ParsedJSON->GetBoolField("result"))
+			{
+				// Delete the object from hashmap
+				ActiveSubscriptionsMap.Remove(id);
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Unsubcription Confirmed");
+				
+			}else
+			{
+				// Declare on fail
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Unsubcription failed");
+			}
+				
 		}
 	}
 }
@@ -152,11 +186,19 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 		int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
 		if( ActiveSubscriptions.Num() > 0 )
 		{
-			FSubscriptionData* Subscription = *ActiveSubscriptions.FindByPredicate([&](FSubscriptionData* data){return data->SubscriptionNumber == SubNum;});
-			if(Subscription)
+			const int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
+			FSubscriptionData* Subscription;
+			if(!ActiveSubscriptionsMap.IsEmpty())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Updated");
-				Subscription->Response = ParsedJSON.Get();
+				for (const TTuple<int, FSubscriptionData*>& Elem : ActiveSubscriptionsMap)
+				{
+					if(Elem.Value->SubscriptionNumber == SubNum)
+					{
+						Subscription = Elem.Value;
+						GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Subcription Updated");
+						Subscription->Response = ParsedJSON.Get();
+					}
+				}
 			}
 		}
 		

@@ -203,7 +203,21 @@ double UWalletAccount::GetSolBalance() const
 
 void UWalletAccount::Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB* &SocketManager)
 {
+	SocketManager->HeartbeatInit();
 	FSubscriptionData* SubRequest = FSubscriptionUtils::AccountSubscribe(pubKey);
 	SocketManager->RequestSubscription(SubRequest);
+}
+
+void UWalletAccount::UnSub2AccountInfo(const int& ID2Remove, UFRequestManager_WB*& SocketManager)
+{
+	FSubscriptionUtils::AccountUnsubscribe(SocketManager->ActiveSubscriptionsMap[ID2Remove]);
+	SocketManager->Unsubscribe(ID2Remove);
+}
+
+double UWalletAccount::ReadSub(int ID, UFRequestManager_WB*& SocketManager)
+{
+	FSubscriptionData* subData = SocketManager->GetSubData(ID);
+	return FSubscriptionUtils::GetAccountSubInfo(subData);
+	
 }
 

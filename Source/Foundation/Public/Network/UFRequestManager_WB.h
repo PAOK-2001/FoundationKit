@@ -13,23 +13,30 @@ struct FOUNDATION_API FSubscriptionData
 	UINT Id;
 	UINT SubscriptionNumber = 0;
 	FString Body;
+	FString UnsubMsg;
 	FJsonObject* Response;
 };
 
 UCLASS()
-class  FOUNDATION_API UFRequestManager_WB:  public UGameInstance{
-    GENERATED_BODY()
+class  FOUNDATION_API UFRequestManager_WB:  public UGameInstance
+{
+	GENERATED_BODY()
 public:
-    virtual void Init() override; // Disable shutdown timer
-    virtual void Shutdown() override;
-    TSharedPtr<IWebSocket> WebSocket;
-    DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
+	virtual void Init() override;
+	virtual void Shutdown() override;
+	TSharedPtr<IWebSocket> WebSocket;
+	DECLARE_EVENT(UFRequestManager_WB, FSocketConnected);
 
-    static int64 GetNextSubID();
-    static int64 GetLastSubID();
+	static int64 GetNextSubID();
+	static int64 GetLastSubID();
+	inline  static TMap<int, FSubscriptionData*> ActiveSubscriptionsMap;
 
-    void RequestSubscription(FSubscriptionData* SubData);
-    void Unsubscribe(FSubscriptionData* SubData);
+	void RequestSubscription(FSubscriptionData* SubData);
+	void Unsubscribe(int subID);
+	FSubscriptionData* GetSubData(int subID);
+	void HeartbeatInit();
+	UFUNCTION()
+	void HeartbeatHelper();
 
 private:
 	inline static FSocketConnected OnConnected;
