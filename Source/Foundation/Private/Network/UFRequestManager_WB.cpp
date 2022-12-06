@@ -183,8 +183,9 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 
 	if (FJsonSerializer::Deserialize(Reader, ParsedJSON))
 	{
-		int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
-		if( ActiveSubscriptions.Num() > 0 )
+		const TSharedPtr<FJsonObject>* outObject;
+		
+		if(!ParsedJSON->TryGetObjectField("error", outObject))
 		{
 			const int SubNum = ParsedJSON->GetObjectField("params")->GetIntegerField("subscription");
 			FSubscriptionData* Subscription;
@@ -201,11 +202,14 @@ void UFRequestManager_WB::ParseNotification(const FString& Response)
 				}
 			}
 		}
-		
+		else
+		{
+			const TSharedPtr<FJsonObject> error = ParsedJSON->GetObjectField("error");
+			FRequestUtils::DisplayError(error->GetStringField("message"));
+		}
 	}
 	else
 	{
 		FRequestUtils::DisplayError("Failed to parse Response from the server");
 	}
 }
-

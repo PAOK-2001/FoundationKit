@@ -1,0 +1,51 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.Foundation.cpp.obj": [
+			"Base58.cpp.obj",
+			"CryptoUtils.cpp.obj",
+			"FEd25519Bip39.cpp.obj",
+			"CreatePasswordWidget.cpp.obj",
+			"DerivationPathWidget.cpp.obj",
+			"GenerateSecretRecoveryPhraseWidget.cpp.obj",
+			"UseSecretRecoveryPhraseWidget.cpp.obj",
+			"WalletCreationWidget.cpp.obj",
+			"Foundation.cpp.obj",
+			"FoundationSettings.cpp.obj",
+			"RequestManager.cpp.obj",
+			"RequestUtils.cpp.obj",
+			"SubscriptionUtils.cpp.obj",
+			"UFRequestManager_WB.cpp.obj",
+			"Account.cpp.obj",
+			"Instructions.cpp.obj",
+			"Mnemonic.cpp.obj",
+			"Transaction.cpp.obj",
+			"TransactionUtils.cpp.obj",
+			"Wallet.cpp.obj",
+			"SolanaWallet.cpp.obj",
+			"SolanaWalletManager.cpp.obj",
+			"TokenAccount.cpp.obj",
+			"WalletAccount.cpp.obj"
+		],
+		"Module.Foundation.gen.cpp.obj": [
+			"Account.gen.cpp.obj",
+			"CreatePasswordWidget.gen.cpp.obj",
+			"DerivationPathWidget.gen.cpp.obj",
+			"Foundation.init.gen.cpp.obj",
+			"FoundationSettings.gen.cpp.obj",
+			"GenerateSecretRecoveryPhraseWidget.gen.cpp.obj",
+			"HomeWalletCreationWidget.gen.cpp.obj",
+			"SelectDerivationPathWidget.gen.cpp.obj",
+			"SolanaWallet.gen.cpp.obj",
+			"SolanaWalletManager.gen.cpp.obj",
+			"TokenAccount.gen.cpp.obj",
+			"TokenBalanceWidget.gen.cpp.obj",
+			"Types.gen.cpp.obj",
+			"UFRequestManager_WB.gen.cpp.obj",
+			"UseSecretRecoveryPhraseWidget.gen.cpp.obj",
+			"Wallet.gen.cpp.obj",
+			"WalletAccount.gen.cpp.obj",
+			"WalletCreationWidget.gen.cpp.obj"
+		]
+	}
+}
