@@ -140,7 +140,7 @@ TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionDat
 		return result;
 	
 	}
-	return NULL;
+	return nullptr;
 }
 
 FSubscriptionData* FSubscriptionUtils::SlotSubscribe()

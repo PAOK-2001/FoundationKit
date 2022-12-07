@@ -19,13 +19,11 @@ limitations under the License.
 #include "CoreMinimal.h"
 #include "UFRequestManager_WB.h"
 
-class FOUNDATION_API TransactionUtils
+class FOUNDATION_API TransactionTracker
 {
-public:
-	static void Sub2Transaction(FString TransactionSignature, UFRequestManager_WB* &SocketManager); 
-	static FString GetTransactionErr(int transactionID, UFRequestManager_WB* &SocketManager); 
-	static int GetTransactionSlot(int transactionID, UFRequestManager_WB* &SocketManager);
+	public:
+		static void Sub2Transaction(FString TransactionSignature, UFRequestManager_WB* &SocketManager); 
+		static FString GetTransactionErr(int transactionID, UFRequestManager_WB* &SocketManager); 
+		static int GetTransactionSlot(int transactionID, UFRequestManager_WB* &SocketManager);
 
-	static void DisplayError(const FString& error);
-	static void DisplayInfo(const FString& info);
 };
