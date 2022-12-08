@@ -16,7 +16,7 @@ limitations under the License.
 
 #include "Network/SubscriptionUtils.h"
 #include "JsonObjectConverter.h"
-#include "Network/UFRequestManager_WB.h"
+#include "Network/UGI_WebSocketManager.h"
 #include "Misc/MessageDialog.h"
 #include "SolanaUtils/Utils/Types.h"
 
@@ -24,7 +24,7 @@ static FText ErrorMessage = FText::FromString("Error");
 static FText InfoMessage = FText::FromString("Info");
 
 FSubscriptionData* FSubscriptionUtils::AccountSubscribe(const FString& pubKey){
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
+	FSubscriptionData* request = new FSubscriptionData(UGI_WebSocketManager::GetNextSubID());
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"accountSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
@@ -38,10 +38,10 @@ void FSubscriptionUtils::AccountUnsubscribe(FSubscriptionData* sub2remove)
 			, sub2remove->Id, sub2remove->SubscriptionNumber); // The parameter to unsub is subscription number NOT ID.
 }
 
-double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
-	if(sub2read->Response.IsValid())
+double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* Sub2Read){
+	if(Sub2Read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
+		const TSharedPtr<FJsonObject> result = Sub2Read->Response->GetObjectField("result");
 		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
 		return value->GetNumberField("lamports");
 	}else{
@@ -52,13 +52,13 @@ double FSubscriptionUtils::GetAccountSubInfo(FSubscriptionData* sub2read){
 
 FSubscriptionData* FSubscriptionUtils::LogsSubscribe()
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
+	FSubscriptionData* request = new FSubscriptionData(UGI_WebSocketManager::GetNextSubID());
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsSubscribe","params":["all"]})")
 			,request->Id );
 	request->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
-			,UFRequestManager_WB::GetNextSubID() , request->Id );
+			,UGI_WebSocketManager::GetNextSubID() , request->Id );
 	return request;
 }
 
@@ -66,15 +66,15 @@ void FSubscriptionUtils::LogsUnsubscribe(FSubscriptionData* sub2remove)
 {
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"logsUnsubscribe","params":[%d]})")
-			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+			, UGI_WebSocketManager::GetNextSubID(), sub2remove->SubscriptionNumber);
  }
 
-FString FSubscriptionUtils::GetLogsSubInfo(FSubscriptionData* sub2read)
+FString FSubscriptionUtils::GetLogsSubInfo(FSubscriptionData* Sub2Read)
 {
-	if(sub2read->Response.IsValid())
+	if(Sub2Read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
-		const TSharedPtr<FJsonObject> value = sub2read->Response->GetObjectField("value");
+		const TSharedPtr<FJsonObject> result = Sub2Read->Response->GetObjectField("result");
+		const TSharedPtr<FJsonObject> value = Sub2Read->Response->GetObjectField("value");
 		return result->GetStringField("signature");
 	}
 	return "empty";
@@ -82,13 +82,13 @@ FString FSubscriptionUtils::GetLogsSubInfo(FSubscriptionData* sub2read)
 
 FSubscriptionData* FSubscriptionUtils::ProgramSubscribe(const FString& pubKey)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
+	FSubscriptionData* request = new FSubscriptionData(UGI_WebSocketManager::GetNextSubID());
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programSubscribe","params":["%s"]})")
 			,request->Id , *pubKey );
 	request->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
-			,UFRequestManager_WB::GetNextSubID() , request->Id );
+			,UGI_WebSocketManager::GetNextSubID() , request->Id );
 	return request;
 }
 
@@ -96,24 +96,24 @@ void FSubscriptionUtils::ProgramUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"programUnsubscribe","params":[%d]})")
-			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+			, UGI_WebSocketManager::GetNextSubID(), sub2remove->SubscriptionNumber);
  }
 
-int FSubscriptionUtils::GetProgramSubInfo(FSubscriptionData* sub2read)
+int FSubscriptionUtils::GetProgramSubInfo(FSubscriptionData* Sub2Read)
 {
-	if(sub2read->Response.IsValid())
+	if(Sub2Read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
-		const TSharedPtr<FJsonObject> value = result->GetObjectField("value");
-		const TSharedPtr<FJsonObject> account = result->GetObjectField("account");
-		return account->GetNumberField("lamports");
+		const TSharedPtr<FJsonObject> Result = Sub2Read->Response->GetObjectField("result");
+		const TSharedPtr<FJsonObject> Value = Result->GetObjectField("value");
+		const TSharedPtr<FJsonObject> Account = Result->GetObjectField("account");
+		return Account->GetNumberField("lamports");
 	}
 	return -1.0;
 }
 
 FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signature)
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
+	FSubscriptionData* request = new FSubscriptionData(UGI_WebSocketManager::GetNextSubID());
 	
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureSubscribe","params":["%s"]})")
@@ -121,7 +121,7 @@ FSubscriptionData* FSubscriptionUtils::SignatureSubscribe(const FString& signatu
 
 	request->UnsubMsg =
 	FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
-		,UFRequestManager_WB::GetNextSubID() , request->Id );
+		,UGI_WebSocketManager::GetNextSubID() , request->Id );
 	return request;
 }
 
@@ -129,59 +129,61 @@ void FSubscriptionUtils::SignatureUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"signatureUnsubscribe","params":[%d]})")
-			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+			, UGI_WebSocketManager::GetNextSubID(), sub2remove->SubscriptionNumber);
  }
 
-TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionData* sub2read)
+TSharedPtr<FJsonObject> FSubscriptionUtils::GetSignatureSubInfo(FSubscriptionData* Sub2Read)
 {
-	if(sub2read->Response.IsValid())
+	if(Sub2Read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
-		return result;
-	
+		if(Sub2Read->Response->GetObjectField("result"))
+		{
+			const TSharedPtr<FJsonObject> Result = Sub2Read->Response->GetObjectField("result");
+			return Result;
+		}
 	}
 	return nullptr;
 }
 
 FSubscriptionData* FSubscriptionUtils::SlotSubscribe()
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
+	FSubscriptionData* Request = new FSubscriptionData(UGI_WebSocketManager::GetNextSubID());
 	
-	request->Body =
+	Request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotSubscribe"})")
-			,request->Id );
-	request->UnsubMsg =
+			,Request->Id );
+	Request->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
-			,UFRequestManager_WB::GetNextSubID( ), request->Id );
-	return request;
+			,UGI_WebSocketManager::GetNextSubID( ), Request->Id );
+	return Request;
 }
 
-void FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* sub2remove)
+void FSubscriptionUtils::SlotUnsubscribe(FSubscriptionData* SubToRemove)
  {
-	sub2remove->UnsubMsg =
+	SubToRemove->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"slotUnsubscribe","params":[%d]})")
-			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+			, UGI_WebSocketManager::GetNextSubID(), SubToRemove->SubscriptionNumber);
  }
 
-int FSubscriptionUtils::GetSlotSubInfo(FSubscriptionData* sub2read)
+int FSubscriptionUtils::GetSlotSubInfo(FSubscriptionData* Sub2Read)
 {
-	if(sub2read->Response.IsValid())
+	if(Sub2Read->Response.IsValid())
 	{
-		const TSharedPtr<FJsonObject> result = sub2read->Response->GetObjectField("result");
-		return result->GetNumberField("parent");
+		const TSharedPtr<FJsonObject> Result = Sub2Read->Response->GetObjectField("result");
+		return Result->GetNumberField("parent");
 	}
 	return -1;
 }
 
 FSubscriptionData* FSubscriptionUtils::RootSubscribe()
 {
-	FSubscriptionData* request = new FSubscriptionData(UFRequestManager_WB::GetNextSubID());
+	FSubscriptionData* request = new FSubscriptionData(UGI_WebSocketManager::GetNextSubID());
 	request->Body =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootSubscribe"})")
 			,request->Id );
 	request->UnsubMsg =
 		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
-			,UFRequestManager_WB::GetNextSubID() , request->Id );
+			,UGI_WebSocketManager::GetNextSubID() , request->Id );
 	
 	return request;
 }
@@ -190,14 +192,14 @@ void FSubscriptionUtils::RootUnsubscribe(FSubscriptionData* sub2remove)
  {
 	sub2remove->UnsubMsg =
  		FString::Printf(TEXT(R"({"jsonrpc":"2.0","id":%d,"method":"rootUnsubscribe","params":[%d]})")
-			, UFRequestManager_WB::GetNextSubID(), sub2remove->SubscriptionNumber);
+			, UGI_WebSocketManager::GetNextSubID(), sub2remove->SubscriptionNumber);
  }
 
-int FSubscriptionUtils::GetRootSubInfo(FSubscriptionData* sub2read)
+int FSubscriptionUtils::GetRootSubInfo(FSubscriptionData* Sub2Read)
 {
-	if(sub2read->Response.IsValid())
+	if(Sub2Read->Response.IsValid())
 	{
-		return sub2read->Response->GetNumberField("result");
+		return Sub2Read->Response->GetNumberField("result");
 	}
 	return -1;
 }
@@ -211,6 +213,3 @@ void FSubscriptionUtils::DisplayInfo(const FString& info)
 {
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(info), &InfoMessage);
 }
-
-// Use simulateTransaction RPC
-// Track that signature

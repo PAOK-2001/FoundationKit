@@ -12,7 +12,7 @@
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/TokenAccount.gen.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/TokenBalanceWidget.gen.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/Types.gen.cpp"
-#include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/UFRequestManager_WB.gen.cpp"
+#include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/UGI_WebSocketManager.gen.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/UseSecretRecoveryPhraseWidget.gen.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/Wallet.gen.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Intermediate/Build/Win64/UnrealEditor/Inc/Foundation/WalletAccount.gen.cpp"

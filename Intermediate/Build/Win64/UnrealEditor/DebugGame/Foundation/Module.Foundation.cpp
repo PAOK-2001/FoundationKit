@@ -13,7 +13,7 @@
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/Network/RequestUtils.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/Network/SubscriptionUtils.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/Network/TransactionTracking.cpp"
-#include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/Network/UFRequestManager_WB.cpp"
+#include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/Network/UGI_WebSocketManager.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/SolanaUtils/Account.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/SolanaUtils/Instructions.cpp"
 #include "D:/Testing-StarAtlas/TestingStarAtlas/Plugins/FoundationKit/Source/Foundation/Private/SolanaUtils/Mnemonic.cpp"

@@ -17,7 +17,7 @@ Author: Daniele Calanna
 Contributers: Riccardo Torrisi, Federico Arona
 */
 #pragma once
-#include "Network//UFRequestManager_WB.h"
+#include "Network/UGI_WebSocketManager.h"
 #include "SolanaWallet.h"
 #include "SolanaUtils/Account.h"
 #include "SolanaUtils/Wallet.h"
@@ -97,9 +97,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendTokenEstimate(UTokenAccount* TokenAccount, const FString& RecipientPublicKey, float Amount) const;
 
-	void Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB* &SocketManager);
-	void UnSub2AccountInfo(const int& subID, UFRequestManager_WB* &SocketManager);
-	double ReadSub(int ID,  UFRequestManager_WB*& SocketManager);
+	void Sub2AccountInfo(const FString& pubKey, UGI_WebSocketManager* &SocketManager);
+	void UnSub2AccountInfo(const int& subID, UGI_WebSocketManager* &SocketManager);
+	double ReadSub(int ID,  UGI_WebSocketManager*& SocketManager);
 
 	UFUNCTION(BlueprintPure)
 	USolanaWallet* GetOwningWallet() const { return CastChecked<USolanaWallet>(GetOuter()); }

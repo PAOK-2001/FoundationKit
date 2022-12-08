@@ -17,13 +17,13 @@ limitations under the License.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UFRequestManager_WB.h"
+#include "UGI_WebSocketManager.h"
 
-class FOUNDATION_API TransactionTracker
+class FOUNDATION_API FTransactionTracker
 {
 	public:
-		static void Sub2Transaction(FString TransactionSignature, UFRequestManager_WB* &SocketManager); 
-		static FString GetTransactionErr(int transactionID, UFRequestManager_WB* &SocketManager); 
-		static int GetTransactionSlot(int transactionID, UFRequestManager_WB* &SocketManager);
+		static void Sub2Transaction(const FString TransactionSignature, UGI_WebSocketManager* &SocketManager); 
+		static int GetTransactionErr(const int TransactionID, UGI_WebSocketManager* &SocketManager); 
+		static int GetTransactionSlot(const int TransactionID, UGI_WebSocketManager* &SocketManager);
 
 };

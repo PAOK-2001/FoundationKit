@@ -40,7 +40,7 @@ public:
 	static TSharedPtr<FJsonObject> GetSignatureSubInfo(FSubscriptionData* sub2read);
 
 	static FSubscriptionData* SlotSubscribe();
-	static void SlotUnsubscribe(FSubscriptionData* sub2remove);
+	static void SlotUnsubscribe(FSubscriptionData* SubToRemove);
 	static int GetSlotSubInfo(FSubscriptionData* sub2read);
 
 	static FSubscriptionData* RootSubscribe();

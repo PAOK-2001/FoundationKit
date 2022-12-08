@@ -1,30 +1,37 @@
 #include "Network/TransactionTracking.h"
-#include "Network/UFRequestManager_WB.h"
+#include "Network/UGI_WebSocketManager.h"
 #include "Network/SubscriptionUtils.h"
+#include "limits.h"
 
 
-void TransactionTracker::Sub2Transaction(FString TransactionSignature, UFRequestManager_WB*& SocketManager)
+void FTransactionTracker::Sub2Transaction(const FString TransactionSignature, UGI_WebSocketManager*& SocketManager)
 {
 	FSubscriptionData* SubRequest = FSubscriptionUtils::SignatureSubscribe(TransactionSignature);
-	SocketManager->RequestSubscription(SubRequest);
+	SocketManager->Subscribe(SubRequest);
 }
 
-FString TransactionTracker::GetTransactionErr(int transactionID, UFRequestManager_WB*& SocketManager)
+int FTransactionTracker::GetTransactionErr(const int TransactionID, UGI_WebSocketManager*& SocketManager)
 {
-	FSubscriptionData* Transaction = SocketManager->ActiveSubscriptionsMap[transactionID];
-	TSharedPtr<FJsonObject> Result = FSubscriptionUtils::GetSignatureSubInfo(Transaction);
-	if(Result == NULL)
+	FSubscriptionData* Transaction = SocketManager->ActiveSubscriptions[TransactionID];
+	const TSharedPtr<FJsonObject> Result = FSubscriptionUtils::GetSignatureSubInfo(Transaction);
+	if(Result.IsValid())
 	{
-		return "Not possible to fetch info";
-	}else
-	{
-		return Result->GetObjectField("value")->GetStringField("err");
+		if(Result->GetObjectField("value")->GetObjectField("err")!= NULL){
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Transaction Error");
+			return -1;
+		}else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Turquoise, "Transaction Completed without errors");
+			return 0;
+		}
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not possible to parse error!");
+	return -1;
 }
 
-int TransactionTracker::GetTransactionSlot(int transactionID, UFRequestManager_WB*& SocketManager)
+int FTransactionTracker::GetTransactionSlot(const int TransactionID, UGI_WebSocketManager*& SocketManager)
 {
-	FSubscriptionData* Transaction = SocketManager->ActiveSubscriptionsMap[transactionID];
+	FSubscriptionData* Transaction = SocketManager->ActiveSubscriptions[TransactionID];
 	TSharedPtr<FJsonObject> Result = FSubscriptionUtils::GetSignatureSubInfo(Transaction);
 	return Result->GetObjectField("context")->GetIntegerField("slot");
 }

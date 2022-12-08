@@ -201,20 +201,20 @@ double UWalletAccount::GetSolBalance() const
 	return Lamports.Get(0.f) / 1e9;
 }
 
-void UWalletAccount::Sub2AccountInfo(const FString& pubKey, UFRequestManager_WB* &SocketManager)
+void UWalletAccount::Sub2AccountInfo(const FString& pubKey, UGI_WebSocketManager* &SocketManager)
 {
-	SocketManager->HeartbeatInit();
+	SocketManager->InitializeHeartbeat();
 	FSubscriptionData* SubRequest = FSubscriptionUtils::AccountSubscribe(pubKey);
-	SocketManager->RequestSubscription(SubRequest);
+	SocketManager->Subscribe(SubRequest);
 }
 
-void UWalletAccount::UnSub2AccountInfo(const int& ID2Remove, UFRequestManager_WB*& SocketManager)
+void UWalletAccount::UnSub2AccountInfo(const int& ID2Remove, UGI_WebSocketManager*& SocketManager)
 {
-	FSubscriptionUtils::AccountUnsubscribe(SocketManager->ActiveSubscriptionsMap[ID2Remove]);
+	FSubscriptionUtils::AccountUnsubscribe(SocketManager->ActiveSubscriptions[ID2Remove]);
 	SocketManager->Unsubscribe(ID2Remove);
 }
 
-double UWalletAccount::ReadSub(int ID, UFRequestManager_WB*& SocketManager)
+double UWalletAccount::ReadSub(int ID, UGI_WebSocketManager*& SocketManager)
 {
 	FSubscriptionData* subData = SocketManager->GetSubData(ID);
 	return FSubscriptionUtils::GetAccountSubInfo(subData);
