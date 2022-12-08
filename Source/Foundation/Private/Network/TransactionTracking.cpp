@@ -1,8 +1,6 @@
 #include "Network/TransactionTracking.h"
 #include "Network/UGI_WebSocketManager.h"
 #include "Network/SubscriptionUtils.h"
-#include "limits.h"
-
 
 void FTransactionTracker::Sub2Transaction(const FString TransactionSignature, UGI_WebSocketManager*& SocketManager)
 {
@@ -13,10 +11,11 @@ void FTransactionTracker::Sub2Transaction(const FString TransactionSignature, UG
 int FTransactionTracker::GetTransactionErr(const int TransactionID, UGI_WebSocketManager*& SocketManager)
 {
 	FSubscriptionData* Transaction = SocketManager->ActiveSubscriptions[TransactionID];
-	const TSharedPtr<FJsonObject> Result = FSubscriptionUtils::GetSignatureSubInfo(Transaction);
+	TSharedPtr<FJsonObject> Result = FSubscriptionUtils::GetSignatureSubInfo(Transaction);
 	if(Result.IsValid())
 	{
-		if(Result->GetObjectField("value")->GetObjectField("err")!= NULL){
+		if(Result->GetObjectField("value")->GetIntegerField("err") != NULL){
+			TSharedPtr<FJsonObject> Err = Result->GetObjectField("value")->GetObjectField("err");
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Transaction Error");
 			return -1;
 		}else

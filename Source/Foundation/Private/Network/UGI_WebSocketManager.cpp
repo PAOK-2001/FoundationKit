@@ -4,7 +4,6 @@
 #include "FoundationSettings.h"
 #include "Network/RequestUtils.h"
 #include "TimerManager.h"
-#include <execution>
 
 int64 GLastMessageID = 0;
 FTimerHandle GHeartbeatHandler;
